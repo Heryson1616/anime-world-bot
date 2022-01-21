@@ -183,10 +183,8 @@ module.exports.getContext = ({ ket, message = null, interaction = null, user, se
     return {
         ket: ket,
         config: ket.config,
-        say: ket.send,
         env: message ? message : interaction,
         user: user,
-        server: server,
         args: args,
         author: (message ? ctx.author : ctx.member.user),
         uID: (message ? ctx.author : ctx.member.user).id,

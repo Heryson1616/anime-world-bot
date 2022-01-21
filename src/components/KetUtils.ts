@@ -19,11 +19,6 @@ module.exports = class Utils {
         return;
     }
 
-    async checkUserGuildData(ctx: any, globalchat: boolean = false) {
-        let user;
-        return user;
-    }
-
     async checkRateLimit(ctx, user) {
         !user.rateLimit ? user.rateLimit = 1 : user.rateLimit++;
         !global.rateLimit ? global.rateLimit = setInterval(() => ctx.ket.users.filter(user => user.rateLimit > 0).forEach(u => u.rateLimit--), 5000) : null;

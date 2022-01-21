@@ -22,7 +22,7 @@ module.exports = class MessageCreateEvent {
         };
         const ket = this.ket
         let user = await db.users.find(message.author.id),
-            ctx = getContext({ ket, message, user }, i18next.getFixedT(user?.lang || 'pt'))
+            ctx = getContext({ ket, message, user }, i18next.getFixedT('pt'))
 
         if (user?.banned) return;
 
@@ -35,8 +35,8 @@ module.exports = class MessageCreateEvent {
         ctx = getContext({ ket, user, message, args, command, commandName }, ctx.t)
 
         await KetUtils.checkCache(ctx);
-        ctx.t = i18next.getFixedT(user?.lang || 'pt');
-        ctx.user = await KetUtils.checkUserGuildData(ctx);
+        ctx.t = i18next.getFixedT('pt');
+        ctx.user = await db.users.find(ctx.uID);
 
         if (await KetUtils.checkPermissions({ ctx }) === false) return;
         if (ctx.command.permissions.onlyDevs && !ket.config.DEVS.includes(ctx.uID)) return this.ket.send({
