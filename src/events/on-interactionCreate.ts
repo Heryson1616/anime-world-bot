@@ -38,12 +38,11 @@ module.exports = class InteractionCreateEvent {
         }
         interaction.data?.options?.forEach((option: any) => getArgs(option))
 
-
         ctx = getContext({ ket, user, interaction, args, command, commandName }, ctx.t)
 
         await KetUtils.checkCache(ctx);
         ctx.t = i18next.getFixedT('pt');
-        ctx.user = await db.users.find(ctx.uID);
+        ctx.user = await db.users.find(ctx.uID, true);
 
         if (await KetUtils.checkPermissions({ ctx }) === false) return;
         if (ctx.command.permissions.onlyDevs && !ket.config.DEVS.includes(ctx.uID)) return this.ket.send({

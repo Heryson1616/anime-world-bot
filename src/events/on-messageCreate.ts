@@ -15,17 +15,12 @@ module.exports = class MessageCreateEvent {
         this.ket = ket;
     }
     async start(message: Message) {
-        if (message.author?.bot) return;
-        if (!message.guildID || message.channel.type === 1) {
-            delete require.cache[require.resolve("../packages/events/_on-messageDMCreate")];
-            return require("../packages/events/_on-messageDMCreate")(message, this.ket);
-        };
+        if (message.author?.bot || !message.guildID || message.channel.type === 1) return;
         const ket = this.ket
         let user = await db.users.find(message.author.id),
             ctx = getContext({ ket, message, user }, i18next.getFixedT('pt'))
 
         if (user?.banned) return;
-
         const regexp = new RegExp(`^(${((!user || !user.prefix) ? this.ket.config.DEFAULT_PREFIX : user.prefix).replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')}|<@!?${this.ket.user.id}>)( )*`, 'gi')
         if (!message.content.match(regexp)) return;
         let args: string[] = message.content.replace(regexp, '').trim().split(/ /g),
@@ -36,7 +31,7 @@ module.exports = class MessageCreateEvent {
 
         await KetUtils.checkCache(ctx);
         ctx.t = i18next.getFixedT('pt');
-        ctx.user = await db.users.find(ctx.uID);
+        ctx.user = await db.users.find(ctx.uID, true);
 
         if (await KetUtils.checkPermissions({ ctx }) === false) return;
         if (ctx.command.permissions.onlyDevs && !ket.config.DEVS.includes(ctx.uID)) return this.ket.send({

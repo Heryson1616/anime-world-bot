@@ -39,7 +39,6 @@ global.session = {
 
 global.session.log('normal', 'SHARDING MANAGER', c.bgBlueBright("Iniciando fragmentação..."))
 
-
 ket.boot().then(() => {
     process.env.DISCORD_TOKEN = null;
     process.env.BETA_DISCORD_TOKEN = null;
