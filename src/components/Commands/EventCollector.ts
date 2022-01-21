@@ -11,7 +11,6 @@ export default {
                 return (args)
             }
             await filter(...args);
-            await endCollector();
         }
 
         if (time) timeout = setTimeout(async () => {

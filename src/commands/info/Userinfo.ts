@@ -30,7 +30,7 @@ module.exports = class UserinfoCommand extends CommandStructure {
         })
     }
     async execute(ctx) {
-        let member = await this.finduser(ctx.env, ctx.args[0], true),
+        let member: any = await this.ket.findUser(ctx.env, ctx.args[0], true),
             embed = new EmbedBuilder()
                 .setAuthor(member.user.username, member.user.dynamicAvatarURL('jpg'))
                 .setTitle(`Informações do Usuário`)

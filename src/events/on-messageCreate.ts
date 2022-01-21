@@ -34,7 +34,6 @@ module.exports = class MessageCreateEvent {
         let args: string[] = message.content.replace(regexp, '').trim().split(/ /g),
             commandName: string | null = args.shift().toLowerCase(),
             command = ket.commands.get(commandName) || ket.commands.get(ket.aliases.get(commandName));
-
         if (!command && (command = await KetUtils.commandNotFound(ctx, commandName)) === false) return;
         ctx = getContext({ ket, user, server, message, args, command, commandName }, ctx.t)
 

@@ -31,7 +31,7 @@ module.exports = class RegistryCommand extends CommandStructure {
         })
     }
     async execute(ctx) {
-        let member = await this.findUser(ctx.env, ctx.args[0], true);
+        let member = await this.ket.findUser(ctx.env, ctx.args[0], true);
         if (!member || member.id === ctx.uID) return ctx.channel.createMessage('vou registrar um fantasma seu otário?');
 
         let roles = [],
@@ -99,32 +99,32 @@ module.exports = class RegistryCommand extends CommandStructure {
             if (!(interaction instanceof ComponentInteraction) || interaction.data.component_type !== 2 || interaction.message.id != msg.id) return false;
             if (interaction.member.user.id !== ctx.uID) return await interaction.createMessage({ content: 'Você não tem permissão para isso', flags: 64 });
             await interaction.deferUpdate();
-            const filtrarEmbed = (embed) => {
-                return embed.embed.description.replace('{{roles}}', roles[0] ? roles.join(', ') : 'Nenhum');
+            const filtrarEmbed = async (embed) => {
+                embed.embed.description = embed.embed.description.replace('{{roles}}', roles[0] ? roles.join(', ') : 'Nenhum');
+                await msg.edit(embed);
             }
 
             switch (interaction.data.custom_id) {
                 case 'macho': roles.push('<@&872438929096327179>');
-                    await msg.edit(filtrarEmbed(msgObj2));
+                    await filtrarEmbed(msgObj2);
                     break;
                 case 'femea': roles.push('<@&872438930925035570>');
-                    await msg.edit(filtrarEmbed(msgObj2));
+                    await filtrarEmbed(msgObj2);
                     break;
                 case 'naobinario': roles.push('<@&872438930086178816>');
-                    await msg.edit(filtrarEmbed(msgObj2));
+                    await filtrarEmbed(msgObj2);
                     break;
-                case 'aboveage':
-                    roles.push('<@&872438931529027594>')
-                    await msg.edit(filtrarEmbed(msgObj3))
+                case 'aboveage': roles.push('<@&872438931529027594>');
+                    await filtrarEmbed(msgObj3);
                     break
                 case 'underage': roles.push('<@&872438931608723477>');
-                    await msg.edit(filtrarEmbed(msgObj3));
+                    await filtrarEmbed(msgObj3);
                     break;
                 case 'hetero': roles.push('<@&872447099881529354>');
-                    await msg.edit(filtrarEmbed(msgObj4));
+                    await filtrarEmbed(msgObj4);
                     break;
                 case 'lgbt': roles.push('<@&872447099701174284>');
-                    await msg.edit(filtrarEmbed(msgObj4));
+                    await filtrarEmbed(msgObj4);
                     break;
                 case 'solteiro': roles.push('<@&872447098811998268>');
                     registry();
@@ -139,14 +139,14 @@ module.exports = class RegistryCommand extends CommandStructure {
                     break;
             }
             async function registry() {
-                await msg.edit(filtrarEmbed(msgObj5));
+                await filtrarEmbed(msgObj5);
                 roles.forEach(async r => {
                     // let role = ctx.guild.roles.get(r.replace('<@&', '').replace('>', ''));
                     // await member.removeRole('872316304537817149');
                     // await member.addRole(role.id);
                 })
+                // EventCollector.stop();
             }
-            EventCollector.stop();
         }
 
         EventCollector.collect(this.ket, 'interactionCreate', filter, 120_000, () => msg.delete().catch(() => { }))

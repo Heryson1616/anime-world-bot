@@ -1,27 +1,28 @@
 {
-    "name": "ketdiscordbot",
+    "name": "animeworldbot",
     "version": "0.0.2",
     "description": "",
-    "main": "index.js",
+    "main": "dist/index.js",
     "scripts": {
-        "build": "echo Compilando arquivos... && tsc",
-        "start": "npm run build && cross-env NODE_ENV=production node --expose-gc dist/index.js",
-        "direct-mode": "node dist/index.js --no-menu",
-        "no-compile": "cross-env NODE_ENV=production node --expose-gc dist/index.js"
+        "build": "tsc",
+        "start": "npm run build && npm run no-compile",
+        "no-compile": "node --expose-gc --trace-warnings dist/index.js ",
+        "ts-mode": "ts-node-dev --ignore-watch ./ index.ts"
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/KetDiscordBot/Ket"
+        "url": "https://github.com/Heryson1616/anime-world-bot"
     },
-    "author": "Heryson1616 & Shortcat",
+    "author": "Heryson1616",
     "license": "ISC",
     "bugs": {
-        "url": "https://github.com/KetDiscordBot/Ket/issues"
+        "url": "https://github.com/Heryson1616/anime-world-bot/issues"
     },
-    "homepage": "https://github.com/KetDiscordBot/Ket#readme",
+    "homepage": "https://github.com/Heryson1616/anime-world-bot#readme",
     "keywords": [
-        "Discord",
-        "Eris"
+        "discord",
+        "eris",
+        "typescript"
     ],
     "dependencies": {
         "@discordjs/builders": "^0.11.0",

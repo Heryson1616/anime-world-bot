@@ -7,9 +7,9 @@ module.exports = class HelpCommand extends CommandStructure {
     ket: KetClient;
     constructor(ket: KetClient) {
         super(ket, {
-            name: 'registry',
-            aliases: ['registrar', 'r'],
-            category: 'admin',
+            name: 'help',
+            aliases: ['ajuda', '?'],
+            category: 'info',
             cooldown: 1,
             permissions: {
                 user: [],
@@ -27,7 +27,7 @@ module.exports = class HelpCommand extends CommandStructure {
     async execute(ctx) {
         ctx.channel.createMessage({
             embed: {
-                thumbnail: { url: this.client.dynamicAvatarURL('jpg') },
+                thumbnail: { url: this.ket.user.dynamicAvatarURL('jpg') },
                 color: getColor('red'),
                 title: `Olá ${ctx.author.username}`,
                 description: 'pau no seu cu seu otário',

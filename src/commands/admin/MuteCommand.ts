@@ -37,7 +37,6 @@ module.exports = class MuteCommand extends CommandStructure {
             member: any = await ket.findUser(ctx.env, ctx.args[0], true);
 
         if (!member || member.id === ctx.uID) return ket.send({ context: ctx.env, emoji: 'negado', content: 'Usuário não encontrado' });
-        // if (member.roles.includes(role.id)) return message.reply('Ops, este usuário já está mutado', 'cancelar');
 
         let msg = await ket.send({
             context: ctx.env, content: {
@@ -49,8 +48,8 @@ module.exports = class MuteCommand extends CommandStructure {
                 }]
             }
         })
-        await msg.addReaction(getEmoji('confirmar').reaction);
-        await msg.addReaction(getEmoji('cancelar').reaction);
+        await msg.addReaction(getEmoji('confirmar').reaction).catch(() => { });
+        await msg.addReaction(getEmoji('cancelar').reaction).catch(() => { });
 
         const filter = async (msgConfirm: Message, emoji: Emoji, reactor: Member) => {
             if (msgConfirm.id != msg.id || (emoji.id !== getEmoji('confirmar').id && emoji.id !== getEmoji('cancelar').id) || reactor.user.id !== ctx.uID) return false;
@@ -64,7 +63,7 @@ module.exports = class MuteCommand extends CommandStructure {
                                 title: `Usuário silenciado!`,
                                 color: getColor('pink'),
                                 thumbnail: { url: member.user.dynamicAvatarURL('jpg') },
-                                description: `${member.user.mention} foi silenciado por ${ctx.author.id} até ${moment.duration(time - Date.now()).format('dd[d] hh[h] mm[m] ss[s]')}\``,
+                                description: `${member.user.mention} foi silenciado por \`${moment.duration(time - Date.now()).format('dd[d] hh[h] mm[m] ss[s]')}\``,
                             }]
                         })
                     }).catch(() => { });
@@ -83,7 +82,7 @@ module.exports = class MuteCommand extends CommandStructure {
             EventCollector.stop()
         }
 
-        EventCollector.collect(ket, 'messageReactionAdd', filter, 120_000)
+        EventCollector.collect(ket, 'messageReactionAdd', filter, 120_000, () => msg.delete().catch(() => { }))
 
     }
 }

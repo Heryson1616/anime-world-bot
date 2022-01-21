@@ -223,7 +223,7 @@ module.exports = class Utils {
             return false
         }
 
-        missingPermissions = ctx.command.permissions.bot.filter((perm) => !ctx.me.permissions.has(perm)).map(value => t(`permissions:${value}`));
+        missingPermissions = ctx.command.permissions?.bot?.filter((perm) => !ctx.me.permissions.has(perm)).map(value => t(`permissions:${value}`));
 
         if (missingPermissions[0]) {
             notReply ? null :
@@ -277,7 +277,8 @@ module.exports = class Utils {
     }
 
     async commandNotFound(ctx, commandName: string) {
-        let totalCommands: string[] = ctx.ket.commands.map((cmd: any) => cmd.config.name)
+        let totalCommands: string[] = [];
+        ctx.ket.commands.forEach((cmd: any) => totalCommands.push(cmd.config.name))
         ctx.command = ctx.ket.commands.get(this.findResult(commandName, totalCommands))
         if (!ctx.command) return false;
         return ctx.command;

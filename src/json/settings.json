@@ -55,9 +55,7 @@
             "guildMembers",
             "guildWebhooks",
             "guildMessages",
-            "guildMessageTyping",
-            "guildPresences",
-            "directMessages"
+            "guildMessageReactions"
         ],
         "maxShards": 1,
         "messageLimit": 16,

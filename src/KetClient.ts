@@ -188,8 +188,7 @@ export default class KetClient extends Client {
 
     public async findChannel(context?: any, id?: string) {
         let channel: GuildChannel,
-            guild: Guild = context.channel.guild,
-            client = this;
+            guild: Guild = context.channel.guild;
 
         try {
             if (context?.channelMentions) return await get(context.channelMentions[0]);
@@ -202,7 +201,7 @@ export default class KetClient extends Client {
 
         async function get(id) {
             if (guild.channels.has(id)) return guild.channels.get(id);
-            else return await client.getRESTChannel(id);
+            else return await this.getRESTChannel(id);
         }
         return channel;
     }
