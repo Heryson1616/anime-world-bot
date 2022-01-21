@@ -39,7 +39,10 @@ module.exports = class PrefixCommand extends CommandStructure {
                     title: 'Prefixo alterado com sucesso!',
                     color: getColor('green'),
                     description: `Agora o seu prefixo é \`${ctx.args[0].slice(0, 3)}\``,
-                    footer: { icon_url: ctx.author.dynamicAvatarURL('jpg') }
+                    footer: {
+                        text: ctx.author.tag,
+                        icon_url: ctx.author.dynamicAvatarURL('jpg')
+                    }
                 }]
             }
         })

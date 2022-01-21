@@ -29,6 +29,7 @@ export default class KetClient extends Client {
     user: clientUser;
     users: Collection<usuario>;
     shardUptime: ESMap<string | number, number>;
+    callTime: ESMap<string, number>;
 
     constructor(token: string, options: ClientOptions) {
         super(token, options);
@@ -37,7 +38,7 @@ export default class KetClient extends Client {
         this.events = new (EventHandler)(this);
         this.commands = new Map();
         this.aliases = new Map();
-        this.webhooks = new Map();
+        this.callTime = new Map();
         this.shardUptime = new Map();
     }
     public async boot() {
@@ -111,11 +112,7 @@ export default class KetClient extends Client {
                 embeds: embed ? [{
                     color: getColor('red'),
                     title: `${getEmoji('sireneRed').mention} ${t('events:error.title')} ${getEmoji('sireneBlue').mention}`,
-                    description: '',
-                    footer: {
-                        text: "\u2000",
-                        icon_url: user.dynamicAvatarURL('jpg')
-                    }
+                    description: ''
                 }] : [],
                 components: [],
                 flags: 0,
@@ -169,7 +166,7 @@ export default class KetClient extends Client {
 
     public async findUser(context?: any, text?: string, returnMember: boolean = false) {
         let search: string,
-            user: User | Member,
+            user: User | Member = context.author,
             isInteraction = (context instanceof CommandInteraction ? true : false);
 
         if (isNaN(Number(text))) search = String(text).toLowerCase().replace('@', '');

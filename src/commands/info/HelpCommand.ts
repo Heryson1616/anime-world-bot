@@ -35,6 +35,7 @@ module.exports = class HelpCommand extends CommandStructure {
                     title: `Olá ${ctx.author.tag}`,
                     description: `**pau no seu cu seu otário, bah, tchê, trilegal, textinho fofinho de comando de help bah\n\n${getEmoji('ruby').mention}ㅤLista de Comandos:**\n\n>>> ${getEmoji('setaRed').mention} ${commands.join(`\n${getEmoji('setaRed').mention} `)}`,
                     footer: {
+                        text: ctx.author.tag,
                         icon_url: ctx.author.dynamicAvatarURL('jpg')
                     }
                 }]

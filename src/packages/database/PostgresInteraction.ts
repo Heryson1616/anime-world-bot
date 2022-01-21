@@ -34,23 +34,21 @@ module.exports = async (ket) => {
                     postgres.end()
                     global.session.db.ready = false;
                 },
-                users: new table('users', 'id', postgres),
-                servers: new table('servers', 'id', postgres),
-                globalchat: new table('globalchat', 'id', postgres),
-                commands: new table('commands', 'name', postgres),
-                blacklist: new table('blacklist', 'id', postgres)
+                users: new table('users', 'id', postgres)
             };
             global.session.log('log', 'DATABASE', '√ Banco de dados operante');
         })
         .catch((error) => global.session.log('error', 'DATABASE', `x Não foi possível realizar conexão ao banco de dados`, error))
 
     /* DATABASE TESTS */
-    await postgres.query(`SELECT * FROM users`)
+    await postgres.query(`SELECT * FROM users;`)
         .catch(async () => {
             global.session.log('log', 'DATABASE', c.yellow(`Criando tabela users`));
             await postgres.query(`CREATE TABLE public.users (
             id VARCHAR(20) NOT NULL PRIMARY KEY,
             prefix VARCHAR(3) NOT NULL DEFAULT '${ket.config.DEFAULT_PREFIX}',
-            registros NUMERIC CHECK(commands > -1) DEFAULT 1));`)
+            registros NUMERIC CHECK(registros > -1) DEFAULT 0,
+            callTime NUMERIC DEFAULT 0
+            );`)
         })
 }

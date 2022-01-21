@@ -14,7 +14,7 @@ module.exports = class ReadyEvent {
             { name: 'sua mãe da janela', type: 0 },
             { name: 'sua mãe na panela', type: 0 },
             { name: "mais um gol do vasco", type: 3 },
-            { name: "os gemidos da sua mãe", type: 2 },
+            { name: "sua mãe gemendo", type: 2 },
             { name: 'Vasco x Flamengo', type: 5 }
         ],
             db = global.session.db;

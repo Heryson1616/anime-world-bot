@@ -2,7 +2,6 @@
         "BOT SETTINGS": "",
     "DEFAULT_PREFIX": ",",
     "DEVS": ["340626138076282900", "568493382884917258"],
-    "PRODUCTION_MODE": true,
     "channels": {
         "database": "934120705866485801",
         "erros": "934120748996501514",
@@ -25,7 +24,8 @@
             "guildMembers",
             "guildWebhooks",
             "guildMessages",
-            "guildMessageReactions"
+            "guildMessageReactions",
+            "guildVoiceStates"
         ],
         "maxShards": 1,
         "messageLimit": 16,

@@ -31,20 +31,16 @@ module.exports = class UserinfoCommand extends CommandStructure {
         })
     }
     async execute(ctx) {
-        let member: any = await this.ket.findUser(ctx.env, ctx.args[0], true);
-        !member ? member = ctx.member : null;
-        let user = await global.session.db.users.find(member.user.id);
-        if (!member) return this.ket.send({ context: ctx.env, emoji: 'negado', content: `Usuário não encontrado!` });
-
-        let embed = new EmbedBuilder()
-            .setAuthor(member.user.username, member.user.dynamicAvatarURL('jpg'))
-            .setTitle(`Informações do Usuário`)
-            .setColor('yellow')
-            .addField('TAG:', `# ${member.user.tag}`, true, 'md')
-            .addField('ID:', member.user.id, true, 'css')
-            .addField('Conta criada em:', `${moment.utc(member.user.createdAt).format('LLLL')}`, false, 'fix')
-            .addField('Total de registros: ', ` ${!user.registros ? 0 : user.registros}`, true, 'css')
-
+        let user: any = await this.ket.findUser(ctx.env, ctx.args[0])
+        if (!user) user = ctx.author
+        let userdb = await global.session.db.users.find(user.id),
+            embed = new EmbedBuilder()
+                .setAuthor(user.tag, user.dynamicAvatarURL('jpg'))
+                .setTitle(`Informações do Usuário`)
+                .setColor('yellow')
+                .addField('ID:', user.id, true, 'css')
+                .addField('Registros feitos: ', ` ${!userdb.registros ? 0 : userdb.registros}`, true, 'css')
+                .addField('Tempo em Call: ', `# ${moment.duration(userdb.calltime ? Number(userdb.calltime) : 0).format('dd[d] hh[h] mm[m] ss[s] S[ms]')}`, true, 'md')
         return this.ket.send({ context: ctx.env, content: { embeds: [embed.build()] } });
     }
 }

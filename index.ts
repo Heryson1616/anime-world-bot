@@ -11,7 +11,7 @@ duration(moment);
 require('dotenv').config();
 require('./src/components/core/ProtoTypes').start();
 console.clear();
-const ket = new KetClient(`Bot ${settings.PRODUCTION_MODE ? process.env.DISCORD_TOKEN : process.env.BETA_CLIENT_TOKEN}`, settings.CLIENT_OPTIONS as ClientOptions)
+const ket = new KetClient(`Bot ${process.env.DISCORD_TOKEN}`, settings.CLIENT_OPTIONS as ClientOptions)
 
 global.session = {
     rootDir: __dirname,
