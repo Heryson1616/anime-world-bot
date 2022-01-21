@@ -18,11 +18,11 @@ global.session = {
     log: async (type: string = "log", setor = "CLIENT", message: string, error: any = '') => {
         moment.locale("pt-BR");
         let str = `[ ${setor} | ${moment.tz(Date.now(), "America/Bahia").format("LT")} ] - ${message}`;
-        //settings.PRODUCTION_MODE ? ket.executeWebhook(process.env.WEBHOOK_LOGS.split(' | ')[0], process.env.WEBHOOK_LOGS.split(' | ')[1], {
-            // username: 'Ket Logs',
-            // avatarURL: "https://cdn.discordapp.com/attachments/788376558271201290/932605381539139635/797062afbe6a08ae32e443277f14b7e2.jpg",
-            // content: `\`${str}\n${error}\``.slice(0, 2000)
-        // }) : null;
+        ket.executeWebhook(process.env.WEBHOOK_LOGS.split(' | ')[0], process.env.WEBHOOK_LOGS.split(' | ')[1], {
+            username: 'Ket Logs',
+            avatarURL: "https://cdn.discordapp.com/attachments/788376558271201290/932605381539139635/797062afbe6a08ae32e443277f14b7e2.jpg",
+            content: `\`${str}\n${error}\``.slice(0, 2000)
+        });
         switch (type) {
             case 'normal': console.log(str);
                 break

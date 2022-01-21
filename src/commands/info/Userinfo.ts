@@ -32,15 +32,19 @@ module.exports = class UserinfoCommand extends CommandStructure {
     }
     async execute(ctx) {
         let member: any = await this.ket.findUser(ctx.env, ctx.args[0], true);
+        !member ? member = ctx.member : null;
+        let user = await global.session.db.users.find(member.user.id);
         if (!member) return this.ket.send({ context: ctx.env, emoji: 'negado', content: `Usuário não encontrado!` });
 
         let embed = new EmbedBuilder()
             .setAuthor(member.user.username, member.user.dynamicAvatarURL('jpg'))
             .setTitle(`Informações do Usuário`)
-            .addField('TAG:', `\`${member.user.tag}\``, true)
-            .addField('ID:', `\`${member.user.id}\``, true)
-            .addField('Idade da conta:', `${member.user.createdAt}`);
-        member ? embed.addField('Está neste servidor desde:', member.joinedAt, true) : null;
+            .setColor('yellow')
+            .addField('TAG:', `# ${member.user.tag}`, true, 'md')
+            .addField('ID:', member.user.id, true, 'css')
+            .addField('Conta criada em:', `${moment.utc(member.user.createdAt).format('LLLL')}`, false, 'fix')
+            .addField('Total de registros: ', ` ${!user.registros ? 0 : user.registros}`, true, 'css')
+
         return this.ket.send({ context: ctx.env, content: { embeds: [embed.build()] } });
     }
 }

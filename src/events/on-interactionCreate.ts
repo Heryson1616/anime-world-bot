@@ -24,8 +24,6 @@ module.exports = class InteractionCreateEvent {
         let user = await db.users.find(interaction.member.user.id),
             ctx = getContext({ ket, interaction, user }, i18next.getFixedT('pt'))
 
-        if (user?.banned) return;
-
         let args: string[] = [],
             commandName: string = interaction.data.name,
             command = ket.commands.get(commandName) || ket.commands.get(ket.aliases.get(commandName));

@@ -19,41 +19,6 @@ module.exports = class Utils {
         return;
     }
 
-    async checkRateLimit(ctx, user) {
-        !user.rateLimit ? user.rateLimit = 1 : user.rateLimit++;
-        !global.rateLimit ? global.rateLimit = setInterval(() => ctx.ket.users.filter(user => user.rateLimit > 0).forEach(u => u.rateLimit--), 5000) : null;
-
-        let messages = await db.globalchat.getAll(10, { key: 'id', type: 'DESC' });
-        messages?.filter(m => m.author === ctx.uID)?.forEach(msg => {
-            let content = String(ctx.channel.messages.get(msg.id)?.content);
-            content.length > 1500 ? user.rateLimit++ : null;
-            this.checkSimilarity(content, ctx.env.content) >= 0.9 ? user.rateLimit++ : null
-        })
-
-        if (user.rateLimit >= 10) {
-            await db.users.update(ctx.uID, {
-                banned: true,
-                reason: `[ AUTO-MOD ] - Mal comportamento no chat global`
-            });
-            let userBl = await db.blacklist.find(user.id)
-            if (userBl) userBl.warns < 3 ? await db.blacklist.update(user.id, {
-                timeout: Date.now() + user.rateLimit * 1000 * 60,
-                warns: 'sql warns + 1'
-            }) : null
-            else await db.blacklist.create(user.id, { timeout: Date.now() + user.rateLimit * 1000 * 60 })
-            ctx.ket.send({
-                context: ctx.env, emoji: 'sireneRed', content: {
-                    embeds: [{
-                        color: getColor('red'),
-                        title: `Auto-mod - Globalchat`,
-                        description: `[ AUTO-MOD ] - ${ctx.author.tag} (ID: ${ctx.author.id}) foi banido por ${moment.duration(user.rateLimit * 1000 * 60).format('h[h] m[m]')} por mal comportamento. O terceiro banimento será permanente.`
-                    }]
-                }
-            });
-            return false;
-        } else return true;
-    }
-
     async checkPermissions({ ctx = null, channel = null, command = null, notReply = null }) {
         let missingPermissions: string[] = [],
             t = ctx.t;

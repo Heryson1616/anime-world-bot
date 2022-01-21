@@ -20,7 +20,6 @@ module.exports = class MessageCreateEvent {
         let user = await db.users.find(message.author.id),
             ctx = getContext({ ket, message, user }, i18next.getFixedT('pt'))
 
-        if (user?.banned) return;
         const regexp = new RegExp(`^(${((!user || !user.prefix) ? this.ket.config.DEFAULT_PREFIX : user.prefix).replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')}|<@!?${this.ket.user.id}>)( )*`, 'gi')
         if (!message.content.match(regexp)) return;
         let args: string[] = message.content.replace(regexp, '').trim().split(/ /g),

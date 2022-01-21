@@ -69,7 +69,7 @@ module.exports.EmbedBuilder = class EmbedBuilder {
     }
     addField(name, value, inline = false, code = null) {
         if (!name || this.fields.length >= 25) return this;
-        if (!value) return false;
+        if (!value) return;
         value = value.toString().substring(0, 1024);
         if (code) value = `\`\`\`${code}\n${value}\`\`\``;
         this.fields.push({ name: name.toString().substring(0, 256), value: value, inline });
