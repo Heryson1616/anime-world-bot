@@ -34,11 +34,7 @@ module.exports = class EvalCommand extends CommandStructure {
             },
             dontType: false,
             testCommand: ['message.channel.createMessage("alow")'],
-            data: new SlashCommandBuilder().addStringOption(option =>
-                option.setName("code")
-                    .setDescription("Some code.")
-                    .setRequired(true)
-            )
+            data: new SlashCommandBuilder()
         })
     }
     async execute(ctx) {

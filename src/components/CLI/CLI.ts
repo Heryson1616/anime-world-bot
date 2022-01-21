@@ -24,6 +24,7 @@ module.exports = {
     async deploy({ ket, args }) {
         let commands = []
         await ket.commands.forEach(command => {
+            if (command.config.permissions.onlyDevs) return;
             let c = command.config
             commands.push({
                 name: c.name,

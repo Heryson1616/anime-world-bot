@@ -9,6 +9,7 @@ module.exports.CommandStructure = class CommandStructure {
             name: command.name || null,
             aliases: command.aliases || [],
             category: command.category || "util",
+            description: command.description || null,
             cooldown: command.cooldown || 3,
             permissions: command.permissions || {
                 user: [],
@@ -138,8 +139,10 @@ export const Decoration = {
             dois: "<:dois:919424797606285325>",
             tres: "<:tres:919424800877858816>",
             seta: "<:seta:919424706170462249>",
+            setaRed: "<a:seta_direita:787491026830229534>",
             info: "<:info:919396379615432735>",
             registro: "<:w_registro:919424688642473994> ",
+            ruby: "<a:ruby_bunitin:787108623771107348>",
             sireneBlue: "<a:emergencia2:783149286342787102>",
             sireneRed: "<a:emergencia:770106111381864458>",
             online: '<:online:817023347396706324>',

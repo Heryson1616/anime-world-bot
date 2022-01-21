@@ -51,53 +51,6 @@ module.exports = async (ket) => {
             await postgres.query(`CREATE TABLE public.users (
             id VARCHAR(20) NOT NULL PRIMARY KEY,
             prefix VARCHAR(3) NOT NULL DEFAULT '${ket.config.DEFAULT_PREFIX}',
-            lang VARCHAR(2) DEFAULT 'pt',
-            commands NUMERIC CHECK(commands > -1) DEFAULT 1),
-            banned BOOLEAN NULL,
-            reason TEXT NULL);`)
-        })
-
-    await postgres.query(`SELECT * FROM servers`)
-        .catch(async () => {
-            global.session.log('log', 'DATABASE', c.blue(`Criando tabela servers`))
-            await postgres.query(`CREATE TABLE public.servers (
-                    id VARCHAR(20) NOT NULL PRIMARY KEY,
-                    lang VARCHAR(2) NULL,
-                    globalchat VARCHAR(20) NULL,
-                    partner BOOLEAN NULL
-                    banned BOOLEAN NULL,
-                    reason TEXT NULL);`)
-        })
-
-    await postgres.query(`SELECT * FROM commands`)
-        .catch(async () => {
-            global.session.log('log', 'DATABASE', c.green(`Criando tabela commands`))
-            await postgres.query(`CREATE TABLE public.commands (
-                        name TEXT NOT NULL PRIMARY KEY,
-                        maintenance BOOLEAN NULL,
-                        reason TEXT NULL
-                      );`)
-        })
-
-    await postgres.query(`SELECT * FROM globalchat`)
-        .catch(async () => {
-            global.session.log('log', 'DATABASE', c.yellow(`Criando tabela globalchat`))
-            await postgres.query(`CREATE TABLE public.globalchat (
-                    id VARCHAR(20) NOT NULL PRIMARY KEY,
-                    guild VARCHAR(20) NOT NULL,
-                    author VARCHAR(20) NOT NULL,
-                    editcount NUMERIC DEFAULT 0,
-                    messages VARCHAR(40)[] NULL
-                  );`)
-        })
-
-    return await postgres.query(`SELECT * FROM blacklist`)
-        .catch(async () => {
-            global.session.log('log', 'DATABASE', c.red(`Criando tabela blacklist`))
-            await postgres.query(`CREATE TABLE public.blacklist (
-                    id VARCHAR(20) NOT NULL PRIMARY KEY,
-                    timeout NUMERIC NULL,
-                    warns NUMERIC DEFAULT 1
-                  );`)
+            registros NUMERIC CHECK(commands > -1) DEFAULT 1));`)
         })
 }

@@ -24,11 +24,6 @@ module.exports = class CldCommand extends CommandStructure {
             dontType: false,
             testCommand: ['node -v'],
             data: new SlashCommandBuilder()
-                .addStringOption(option =>
-                    option.setName('command')
-                        .setDescription('A command to be executed.')
-                        .setRequired(true)
-                )
         })
     }
     async execute(ctx) {

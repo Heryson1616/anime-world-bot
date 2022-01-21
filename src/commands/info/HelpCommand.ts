@@ -10,6 +10,7 @@ module.exports = class HelpCommand extends CommandStructure {
             name: 'help',
             aliases: ['ajuda', '?'],
             category: 'info',
+            description: "Exibe a lista de comandos",
             cooldown: 1,
             permissions: {
                 user: [],
@@ -25,13 +26,19 @@ module.exports = class HelpCommand extends CommandStructure {
         })
     }
     async execute(ctx) {
-        ctx.channel.createMessage({
-            embed: {
-                thumbnail: { url: this.ket.user.dynamicAvatarURL('jpg') },
-                color: getColor('red'),
-                title: `Olá ${ctx.author.username}`,
-                description: 'pau no seu cu seu otário',
+        let commands = [];
+        this.ket.commands.forEach(c => c.config.permissions.onlyDevs ? null : commands.push(`\`${ctx.user.prefix}${c.config.name}\`\nㅤㅤ\`${c.config.description}\``))
+        this.ket.send({
+            context: ctx.env, content: {
+                embeds: [{
+                    color: getColor('red'),
+                    title: `Olá ${ctx.author.tag}`,
+                    description: `**pau no seu cu seu otário, bah, tchê, trilegal, textinho fofinho de comando de help bah\n\n${getEmoji('ruby').mention}ㅤLista de Comandos:**\n\n>>> ${getEmoji('setaRed').mention} ${commands.join(`\n${getEmoji('setaRed').mention} `)}`,
+                    footer: {
+                        icon_url: ctx.author.dynamicAvatarURL('jpg')
+                    }
+                }]
             }
-        })
+        });
     }
 }

@@ -21,12 +21,10 @@ module.exports = class InteractionCreateEvent {
             return new (require("../packages/events/_on-messageDMCreate"))(this).start(interaction);
         };
         const ket = this.ket
-        let server = await db.servers.find(interaction.guildID, true),
-            user = await db.users.find(interaction.member.user.id),
-            ctx = getContext({ ket, interaction, server, user })
+        let user = await db.users.find(interaction.member.user.id),
+            ctx = getContext({ ket, interaction, user }, i18next.getFixedT(user?.lang || 'pt'))
 
         if (user?.banned) return;
-        if (server?.banned) return ctx.guild.leave();
 
         let args: string[] = [],
             commandName: string = interaction.data.name,
@@ -41,7 +39,7 @@ module.exports = class InteractionCreateEvent {
         interaction.data?.options?.forEach((option: any) => getArgs(option))
 
 
-        ctx = getContext({ ket, user, server, interaction, args, command, commandName }, ctx.t)
+        ctx = getContext({ ket, user, interaction, args, command, commandName }, ctx.t)
 
         await KetUtils.checkCache(ctx);
         ctx.t = i18next.getFixedT(user?.lang || 'pt');

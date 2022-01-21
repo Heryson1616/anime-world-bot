@@ -12,10 +12,11 @@ module.exports = class RegistryCommand extends CommandStructure {
             name: 'registry',
             aliases: ['registrar', 'r'],
             category: 'admin',
+            description: "Registra um random gay",
             cooldown: 1,
             permissions: {
                 user: [],
-                bot: [],
+                bot: ['administrator'],
                 onlyDevs: false
             },
             access: {
@@ -25,14 +26,16 @@ module.exports = class RegistryCommand extends CommandStructure {
             dontType: false,
             data: new SlashCommandBuilder().addUserOption(option =>
                 option.setName("user")
-                    .setDescription("User to be registred")
+                    .setDescription("A user to be registred")
                     .setRequired(true)
             )
         })
     }
     async execute(ctx) {
-        let member = await this.ket.findUser(ctx.env, ctx.args[0], true);
-        if (!member || member.id === ctx.uID) return ctx.channel.createMessage('vou registrar um fantasma seu otário?');
+        let member = await this.ket.findUser(ctx.env, ctx.args[0], true),
+            db = global.session.db,
+            ket = this.ket;
+        if (!member || member.id === ctx.uID) return this.ket.send({ context: ctx.env, emoji: 'negado', content: `Usuário não encontrado!` });
 
         let roles = [],
             template = {
@@ -50,7 +53,7 @@ module.exports = class RegistryCommand extends CommandStructure {
             registryButton = { type: 2, label: "Registrar", emoji: { name: "verificadoRoxo", id: "917431176745091072" }, style: 1, custom_id: `registry` },
             infos = `Usuário: ${member.user.mention}\nRegistrador:${ctx.author.mention}\n\nCargos adicionados: {{roles}}`;
         let msgObj1 = {
-            embed: { ...template, description: `${getEmoji('seta').mention} Gênero:\n> ${getEmoji('um').mention} <@&872438930925035570>\n> ${getEmoji('dois').mention} <@&872438929096327179>\n> ${getEmoji('tres').mention} <@&872438930086178816>\n\nCargos adicionados: ${!roles[0] ? 'Nenhum' : roles.join(', ')}` },
+            embeds: [{ ...template, description: `${getEmoji('seta').mention} Gênero:\n> ${getEmoji('um').mention} <@&872438930925035570>\n> ${getEmoji('dois').mention} <@&872438929096327179>\n> ${getEmoji('tres').mention} <@&872438930086178816>\n\nCargos adicionados: ${!roles[0] ? 'Nenhum' : roles.join(', ')}` }],
             components: [{
                 type: 1,
                 components: [
@@ -60,7 +63,7 @@ module.exports = class RegistryCommand extends CommandStructure {
             }]
         },
             msgObj2 = {
-                embed: { ...template, description: `${getEmoji('seta').mention} Idade:\n> ${getEmoji('um').mention} <@&872438931608723477>\n> ${getEmoji('dois').mention}<@&872438931529027594>\n\nCargos adicionados: {{roles}}` },
+                embeds: [{ ...template, description: `${getEmoji('seta').mention} Idade:\n> ${getEmoji('um').mention} <@&872438931608723477>\n> ${getEmoji('dois').mention}<@&872438931529027594>\n\nCargos adicionados: {{roles}}` }],
                 components: [{
                     type: 1, components: [
                         { type: 2, label: "-18", style: 1, custom_id: `underage` },
@@ -69,7 +72,7 @@ module.exports = class RegistryCommand extends CommandStructure {
                 }]
             },
             msgObj3 = {
-                embed: { ...template, description: `${getEmoji('seta').mention} Sexualidade:\n> ${getEmoji('um').mention} <@&872447099881529354>\n> ${getEmoji('dois').mention} <@&872447099701174284>\n\nCargos adicionados: {{roles}}` },
+                embeds: [{ ...template, description: `${getEmoji('seta').mention} Sexualidade:\n> ${getEmoji('um').mention} <@&872447099881529354>\n> ${getEmoji('dois').mention} <@&872447099701174284>\n\nCargos adicionados: {{roles}}` }],
                 components: [{
                     type: 1, components: [
                         { type: 2, label: "Hétero", style: 3, custom_id: `hetero` },
@@ -79,7 +82,7 @@ module.exports = class RegistryCommand extends CommandStructure {
                 }]
             },
             msgObj4 = {
-                embed: { ...template, description: `${getEmoji('seta').mention} Estado Civil:\n> ${getEmoji('um').mention} <@&872447098811998268>\n> ${getEmoji('dois').mention} <@&872447090561802287>\n> ${getEmoji('tres').mention} <@&872447098208006184>\n\nCargos adicionados: {{roles}}` },
+                embeds: [{ ...template, description: `${getEmoji('seta').mention} Estado Civil:\n> ${getEmoji('um').mention} <@&872447098811998268>\n> ${getEmoji('dois').mention} <@&872447090561802287>\n> ${getEmoji('tres').mention} <@&872447098208006184>\n\nCargos adicionados: {{roles}}` }],
                 components: [{
                     type: 1, components: [
                         { type: 2, label: "Solteiro", style: 1, custom_id: `solteiro` },
@@ -90,17 +93,18 @@ module.exports = class RegistryCommand extends CommandStructure {
                 }]
             },
             msgObj5 = {
-                embed: { ...template, title: `${getEmoji('registro').mention} Usuário registrado`, description: infos },
+                embeds: [{ ...template, title: `${getEmoji('registro').mention} Usuário registrado`, description: infos }],
                 components: []
             }
-        let msg = await ctx.channel.createMessage(msgObj1);
+
+        let msg = await this.ket.send({ context: ctx.env, content: msgObj1 });
 
         let filter = async (interaction) => {
             if (!(interaction instanceof ComponentInteraction) || interaction.data.component_type !== 2 || interaction.message.id != msg.id) return false;
             if (interaction.member.user.id !== ctx.uID) return await interaction.createMessage({ content: 'Você não tem permissão para isso', flags: 64 });
             await interaction.deferUpdate();
             const filtrarEmbed = async (embed) => {
-                embed.embed.description = embed.embed.description.replace('{{roles}}', roles[0] ? roles.join(', ') : 'Nenhum');
+                embed.embeds[0].description = embed.embeds[0].description.replace('{{roles}}', roles[0] ? roles.join(', ') : 'Nenhum');
                 await msg.edit(embed);
             }
 
@@ -140,15 +144,31 @@ module.exports = class RegistryCommand extends CommandStructure {
             }
             async function registry() {
                 await filtrarEmbed(msgObj5);
+                EventCollector.stop();
                 roles.forEach(async r => {
-                    // let role = ctx.guild.roles.get(r.replace('<@&', '').replace('>', ''));
-                    // await member.removeRole('872316304537817149');
-                    // await member.addRole(role.id);
+                    let role = ctx.guild.roles.get(r.replace('<@&', '').replace('>', ''));
+                    await member.removeRole('872316304537817149');
+                    await member.addRole(role.id);
                 })
-                // EventCollector.stop();
+                await db.users.update(ctx.uID, { registros: 'sql registros + 1' });
+                ket.createMessage(ket.config.channels.registroLogs, {
+                    embed: {
+                        title: 'Usuário registrado!',
+                        color: getColor('green'),
+                        author: {
+                            name: member.user.tag,
+                            icon_url: member.user.dynamicAvatarURL('jpg')
+                        },
+                        description: `Usuário: ${member.user.mention} (ID: ${member.user.id})\nCargos adicionados: ${roles.join(', ')}\nRegistro número ${Number(ctx.user.registros) + 1}`,
+                        footer: {
+                            text: `Registrador: ${ctx.author.tag}`,
+                            icon_url: ctx.author.dynamicAvatarURL('jpg')
+                        }
+                    }
+                })
             }
         }
 
-        EventCollector.collect(this.ket, 'interactionCreate', filter, 120_000, () => msg.delete().catch(() => { }))
+        EventCollector.collect(this.ket, 'interactionCreate', filter, 120_000, () => msg.delete().catch(() => { }));
     }
 }

@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { Emoji, Member, Message, User } from "eris";
+import { Emoji, Member, Message } from "eris";
 import KetClient from "../../KetClient";
 import EventCollector from "../../components/Commands/EventCollector";
 
@@ -14,10 +14,11 @@ module.exports = class MuteCommand extends CommandStructure {
             name: 'mute',
             aliases: ['mutar', 'silenciar'],
             category: 'admin',
+            description: "Coloca um tampão na boca dos vagabundos",
             cooldown: 1,
             permissions: {
                 user: [],
-                bot: [],
+                bot: ['administrator'],
                 onlyDevs: false
             },
             access: {
@@ -25,20 +26,25 @@ module.exports = class MuteCommand extends CommandStructure {
                 Threads: true
             },
             dontType: false,
-            data: new SlashCommandBuilder().addStringOption(option =>
-                option.setName("time")
-                    .setDescription("The duration of punishment")
-                    .setRequired(true)
-            )
+            data: new SlashCommandBuilder()
+                .addUserOption(option =>
+                    option.setName('user')
+                        .setDescription('The user to be muted')
+                        .setRequired(true)
+                )
+                .addStringOption(option =>
+                    option.setName("duration")
+                        .setDescription("The duration of punishment")
+                        .setRequired(true)
+                )
         })
     }
     async execute(ctx) {
-        const ket = this.ket,
-            member: any = await ket.findUser(ctx.env, ctx.args[0], true);
+        const member: any = await this.ket.findUser(ctx.env, ctx.args[0], true);
 
-        if (!member || member.id === ctx.uID) return ket.send({ context: ctx.env, emoji: 'negado', content: 'Usuário não encontrado' });
+        if (!member || member.id === ctx.uID || !ctx.args[1]) return this.ket.send({ context: ctx.env, emoji: 'negado', content: `Comando incompleto, a maneira certa de usar é: \`${ctx.user.prefix}${ctx.commandName} @${ctx.author.tag} 1h 10m 4s\`` });
 
-        let msg = await ket.send({
+        let msg = await this.ket.send({
             context: ctx.env, content: {
                 embeds: [{
                     title: `🔇 | Você está prestes a mutar ${member.user.username}`,
@@ -82,7 +88,7 @@ module.exports = class MuteCommand extends CommandStructure {
             EventCollector.stop()
         }
 
-        EventCollector.collect(ket, 'messageReactionAdd', filter, 120_000, () => msg.delete().catch(() => { }))
+        EventCollector.collect(this.ket, 'messageReactionAdd', filter, 120_000, () => msg.delete().catch(() => { }))
 
     }
 }

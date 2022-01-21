@@ -111,7 +111,11 @@ export default class KetClient extends Client {
                 embeds: embed ? [{
                     color: getColor('red'),
                     title: `${getEmoji('sireneRed').mention} ${t('events:error.title')} ${getEmoji('sireneBlue').mention}`,
-                    description: ''
+                    description: '',
+                    footer: {
+                        text: "\u2000",
+                        icon_url: user.dynamicAvatarURL('jpg')
+                    }
                 }] : [],
                 components: [],
                 flags: 0,
@@ -168,7 +172,7 @@ export default class KetClient extends Client {
             user: User | Member,
             isInteraction = (context instanceof CommandInteraction ? true : false);
 
-        if (isNaN(Number(text))) search = text.toLowerCase().replace('@', '');
+        if (isNaN(Number(text))) search = String(text).toLowerCase().replace('@', '');
         else search = String(text).toLowerCase();
         try {
             if (isNaN(Number(text))) user = context?.mentions[0] || context.channel.guild.members.find((m: Member) => m.user.username.toLowerCase() === search || String(m.nick).toLowerCase() === search || m.user.username.toLowerCase().startsWith(search) || String(m.nick).toLowerCase().startsWith(search) || m.user.username.toLowerCase().includes(search) || String(m.nick).toLowerCase().includes(search));
