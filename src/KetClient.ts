@@ -111,7 +111,7 @@ export default class KetClient extends Client {
                 content: '',
                 embeds: embed ? [{
                     color: getColor('red'),
-                    title: `${getEmoji('sireneRed').mention} ${t('events:error.title')} ${getEmoji('sireneBlue').mention}`,
+                    title: `Erro no sistema!`,
                     description: ''
                 }] : [],
                 components: [],

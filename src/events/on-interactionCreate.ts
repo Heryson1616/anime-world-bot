@@ -51,9 +51,10 @@ module.exports = class InteractionCreateEvent {
                 }]
             }
         })
-        let cRoles = ctx.command.permissions.roles.map(r => ctx.member.roles.includes(r) ? true : false)
-        if (!cRoles.includes(true)) return this.ket.send({ context: ctx.env, emoji: 'negado', content: `Sai randola, só <@&${cRoles.join('> e <@&')}> pode fazer isso` });
-
+        if (ctx.command.permissions.roles[0]) {
+            let cRoles = ctx.command.permissions.roles.map(r => ctx.member.roles.includes(r) ? true : false)
+            if (!cRoles.includes(true)) return this.ket.send({ context: ctx.env, emoji: 'errado', content: `> Sai randola, só <@&${cRoles.join('> e <@&')}> pode fazer isso` });
+        }
         return new Promise(async (res, rej) => {
             try {
                 await interaction.defer().catch(() => { });

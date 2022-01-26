@@ -31,9 +31,9 @@ module.exports = class Utils {
                 context: ctx.env, content: {
                     embeds: [{
                         color: getColor('red'),
-                        title: `${getEmoji('sireneRed').mention} ${t('events:no-threads')}`
+                        description: `${getEmoji('sireneRed').mention} ${t('events:no-threads')}`
                     }]
-                }, emoji: 'negado'
+                }, emoji: 'errado'
             })
             return false
         }
@@ -42,7 +42,7 @@ module.exports = class Utils {
 
         if (missingPermissions[0]) {
             notReply ? null :
-                ctx.ket.send({ context: ctx.env, content: t('permissions:missingPerms', { missingPerms: missingPermissions.join(', ') }), embed: false, emoji: 'negado' })
+                ctx.ket.send({ context: ctx.env, content: '> ' + t('permissions:missingPerms', { missingPerms: missingPermissions.join(', ') }), embed: false, emoji: 'errado' })
                     .catch(async () => {
                         let dmChannel = await ctx.author.getDMChannel();
                         dmChannel.createMessage(t('permissions:missingPerms', { missingPerms: missingPermissions.join(', ') }))
@@ -73,9 +73,9 @@ module.exports = class Utils {
                 embeds: [{
                     color: getColor('red'),
                     thumbnail: { url: 'https://cdn.discordapp.com/attachments/788376558271201290/918721199029231716/error.gif' },
-                    description: t('events:error.description', { error })
+                    description: '> ' + t('events:error.description', { error })
                 }]
-            }, emoji: 'negado', flags: 64
+            }, emoji: 'errado', flags: 64
         })
 
         ket.createMessage(config.channels.erros, {

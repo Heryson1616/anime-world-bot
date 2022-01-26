@@ -16,6 +16,7 @@ module.exports = class UserinfoCommand extends CommandStructure {
             permissions: {
                 user: [],
                 bot: [],
+                roles: [],
                 onlyDevs: false
             },
             access: {

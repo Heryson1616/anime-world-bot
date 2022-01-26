@@ -26,6 +26,7 @@ module.exports = class EvalCommand extends CommandStructure {
             permissions: {
                 user: [],
                 bot: [],
+                roles: [],
                 onlyDevs: true
             },
             access: {

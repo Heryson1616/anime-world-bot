@@ -15,6 +15,7 @@ module.exports = class HelpCommand extends CommandStructure {
             permissions: {
                 user: [],
                 bot: [],
+                roles: [],
                 onlyDevs: false
             },
             access: {

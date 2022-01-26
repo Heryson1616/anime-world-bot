@@ -36,7 +36,7 @@ module.exports = class RegistryCommand extends CommandStructure {
         let member = await this.ket.findUser(ctx.env, ctx.args[0], true),
             db = global.session.db,
             ket = this.ket;
-        if (!member || member.id === ctx.uID) return this.ket.send({ context: ctx.env, emoji: 'negado', content: `Usuário não encontrado!` });
+        if (!member || member.id === ctx.uID) return this.ket.send({ context: ctx.env, emoji: 'errado', content: `> Usuário não encontrado!` });
 
         let roles = [],
             template = {
@@ -155,13 +155,13 @@ module.exports = class RegistryCommand extends CommandStructure {
                 await db.users.update(ctx.uID, { registros: 'sql registros + 1' });
                 ket.createMessage(ket.config.channels.registroLogs, {
                     embed: {
-                        title: `${getEmoji('membro').mention} Usuário registrado!`,
-                        color: getColor('#4c1313'),
+                        title: `${getEmoji('badge').mention} Usuário registrado!`,
+                        color: getColor('#050505'),
                         author: {
                             name: member.user.tag,
                             icon_url: member.user.dynamicAvatarURL('jpg')
                         },
-                        description: `**Usuário(a):** ${member.user.mention} (ID: ${member.user.id})\n**Registrador(a):** ${ctx.author.mention} (ID: ${ctx.author.id})\n**Total de registros:** \`${Number(ctx.user.registros) + 1}\`\n**Cargos adicionados:**\n${roles.join(', ')}`,
+                        description: `**・Usuário(a):** ${member.user.mention} (ID: ${member.user.id})\n**・Registrador(a):** ${ctx.author.mention} (ID: ${ctx.author.id})\n**・Total de registros:** \`${Number(ctx.user.registros) + 1}\`\n**${getEmoji('add').mention} Cargos adicionados:**\n${roles.join(', ')}`,
                         footer: {
                             text: `Registros | ${ctx.guild.name}`,
                             icon_url: ctx.author.dynamicAvatarURL('jpg')

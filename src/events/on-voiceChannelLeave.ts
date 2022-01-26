@@ -6,7 +6,8 @@ module.exports = class voiceChannelLeaveEvent {
         this.ket = ket;
     }
     async start(member, oldChannel) {
-        if (!this.ket.callTime.get(member.user.id) || oldChannel?.parentID !== '930831522108411915') return;
+        if (!this.ket.callTime.get(member.user.id)) return;
+
         const db = global.session.db,
             initialTimestamp = this.ket.callTime.get(member.user.id),
             user = await db.users.find(member.user.id, true),

@@ -134,6 +134,9 @@ export const Decoration = {
         let emojis = {
             autorizado: "<:autorizado:765952397595639828>",
             negado: "<:negado:765952453203984404>",
+            badge: "<a:badge_black:935899201404043274>",
+            errado: "<a:errado:935902056475140127>",
+            add: "<:add:935899158697627678>",
             confirmar: "<:confirmar:919396264670539856>",
             cancelar: "<:cancelar:919396327140511804>",
             membro: "<:membro:935887811427598348>",

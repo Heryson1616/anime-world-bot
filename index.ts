@@ -31,7 +31,7 @@ console.log = function () {
     }) : null;
 
     if (!setor) return console.info(eval(`args.map(a => inspect(a)).join(', ')`));
-    if(PRODUCTION_MODE) return console.info(str);
+    if (PRODUCTION_MODE) return console.info(str);
     console.info(`\x1B[${color}m${str}\x1B[0m`);
     color === 41 ? console.error(args.join(' ')) : null
 }
@@ -51,11 +51,8 @@ ket.boot().then(() => {
 process
     .on('SIGINT', async () => {
         try {
-            ket.callTime.forEach((a) => {
-                console.log(a)
-                // await global.sessin.db.users.update(id, { callTime: `sql callTime + ${ket.callTime.get(id)}` });
-            })
-            await global.session.db.disconnect();
+            ket.callTime.forEach(async (duration, user) => await global.session.db.users.update(user, { callTime: `sql callTime + ${Date.now() - duration}` }))
+            // await global.session.db.disconnect();
             console.log('DATABASE', '√ Banco de dados desconectado', 33)
         } catch (e) {
             console.log('DATABASE', 'x Houve um erro ao encerrar a conexão com o banco de dados:', e, 41)

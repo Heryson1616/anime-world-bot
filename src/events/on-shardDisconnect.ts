@@ -7,6 +7,10 @@ module.exports = class ShardDisconnect {
     }
     async start(error: string, shardID: number) {
         this.ket.shards.get(shardID).editStatus('dnd', { name: 'Reconnecting...', type: 3 })
+        this.ket.callTime.forEach(async (duration, user) => {
+            await global.session.db.users.update(user, { callTime: `sql callTime + ${Date.now() - duration}` })
+            this.ket.callTime.delete(user);
+        })
         global.session.log('error', "SHARDING MANAGER", `Reconectando shard ${shardID}:`, error);
         return this.ket.shardUptime.set(shardID, NaN);
     }

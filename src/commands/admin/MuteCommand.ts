@@ -42,7 +42,7 @@ module.exports = class MuteCommand extends CommandStructure {
     }
     async execute(ctx) {
         const member: any = await this.ket.findUser(ctx.env, ctx.args[0], true);
-        if (!member || member.id === ctx.uID || !ctx.args[1]) return this.ket.send({ context: ctx.env, emoji: 'negado', content: `Comando incompleto, a maneira certa de usar é: \`${ctx.user.prefix}${ctx.commandName} @${ctx.author.tag} 1h 10m 4s\`` });
+        if (!member || member.id === ctx.uID || !ctx.args[1]) return this.ket.send({ context: ctx.env, emoji: 'errado', content: `> Comando incompleto, a maneira certa de usar é: \`${ctx.user.prefix}${ctx.commandName} @${ctx.author.tag} 1h 10m 4s\`` });
         let regex: RegExp = /([0-9]+)( |)(h|m|s)/gi,
             time: number = Date.now();
         ctx.args.slice(1).join(' ').match(regex).forEach(t => {
@@ -52,7 +52,7 @@ module.exports = class MuteCommand extends CommandStructure {
             if (t.endsWith('m')) return time += bah * 60 * 1_000;
             if (t.endsWith('s')) return time += bah * 1_000;
         })
-        if ((ctx.member.roles.includes('930500134234636318') && !ctx.member.roles.includes('930805796953022494')) && time - Date.now() > (30 * 60 * 1000)) return this.ket.send({ context: ctx.env, emoji: 'negado', content: `<@&930500121517510717> gay só pode mutar por no máximo 30m` });
+        if ((ctx.member.roles.includes('930500134234636318') && !ctx.member.roles.includes('930805796953022494')) && time - Date.now() > (30 * 60 * 1000)) return this.ket.send({ context: ctx.env, emoji: 'errado', content: `> <@&930500121517510717> gay só pode mutar por no máximo 30m` });
 
 
         let msg = await this.ket.send({

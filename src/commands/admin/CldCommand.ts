@@ -15,6 +15,7 @@ module.exports = class CldCommand extends CommandStructure {
             permissions: {
                 user: [],
                 bot: [],
+                roles: [],
                 onlyDevs: true
             },
             access: {
