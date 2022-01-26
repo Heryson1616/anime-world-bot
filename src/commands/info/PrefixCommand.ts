@@ -32,7 +32,7 @@ module.exports = class PrefixCommand extends CommandStructure {
         })
     }
     async execute(ctx) {
-        if (!ctx.args[0]) return this.ket.send({ context: ctx.env, emoji: 'errado', content: `> Comando incompleto, a maneira certa de usar é: \`${ctx.user.prefix}${ctx.commandName} prefixo (no máximo 3 caracteres)\`` });
+        if (!ctx.args[0]) return this.ket.send({ context: ctx.env, emoji: 'errado', content: `Comando incompleto, a maneira certa de usar é: \`${ctx.user.prefix}${ctx.commandName} prefixo (no máximo 3 caracteres)\`` });
         await global.session.db.users.update(ctx.uID, { prefix: ctx.args[0].slice(0, 3) })
         await this.ket.send({
             context: ctx.env, emoji: 'autorizado', content: {

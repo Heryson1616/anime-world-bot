@@ -36,7 +36,7 @@ module.exports = class RegistryCommand extends CommandStructure {
         let member = await this.ket.findUser(ctx.env, ctx.args[0], true),
             db = global.session.db,
             ket = this.ket;
-        if (!member || member.id === ctx.uID) return this.ket.send({ context: ctx.env, emoji: 'errado', content: `> Usuário não encontrado!` });
+        if (!member || member.id === ctx.uID) return this.ket.send({ context: ctx.env, emoji: 'errado', content: `Usuário não encontrado!` });
 
         let roles = [],
             template = {
