@@ -2,11 +2,12 @@
         "BOT SETTINGS": "",
     "DEFAULT_PREFIX": ",",
     "DEVS": ["340626138076282900", "568493382884917258"],
+    "PRODUCTION_MODE": false,
     "channels": {
         "database": "934120705866485801",
         "erros": "934120748996501514",
         "commandLogs": "934120774409785345",
-        "registroLogs": "802053941809381386"
+        "registroLogs": "930516138075512893"
     },
     "CLIENT_OPTIONS": {
         "allowedMentions": {
@@ -27,7 +28,6 @@
             "guildMessageReactions",
             "guildVoiceStates"
         ],
-        "maxShards": 1,
         "messageLimit": 16,
         "restMode": true,
         "rest": {

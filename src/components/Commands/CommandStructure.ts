@@ -14,6 +14,7 @@ module.exports.CommandStructure = class CommandStructure {
             permissions: command.permissions || {
                 user: [],
                 bot: [],
+                roles: [],
                 onlyDevs: false
             },
             access: command.access || {
@@ -133,8 +134,9 @@ export const Decoration = {
         let emojis = {
             autorizado: "<:autorizado:765952397595639828>",
             negado: "<:negado:765952453203984404>",
-            confirmar: "<a:confirmar:919400510866473020>",
+            confirmar: "<:confirmar:919396264670539856>",
             cancelar: "<:cancelar:919396327140511804>",
+            membro: "<:membro:935887811427598348>",
             um: "<:um:919424774944489513>",
             dois: "<:dois:919424797606285325>",
             tres: "<:tres:919424800877858816>",

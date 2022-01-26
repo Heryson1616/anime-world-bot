@@ -33,6 +33,7 @@
         "didyoumean": "^1.2.2",
         "dotenv": "^10.0.0",
         "eris": "^0.16.1",
+        "express": "^4.17.2",
         "gradient-string": "^1.2.0",
         "i18next": "^21.6.6",
         "i18next-fs-backend": "^1.1.4",

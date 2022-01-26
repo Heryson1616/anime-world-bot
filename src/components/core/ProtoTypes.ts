@@ -57,16 +57,7 @@ module.exports = class ProtoTypes {
 
 		//@ts-ignore
 		if (!Eris.Member.prototype.mute) Object.defineProperty(Eris.Member.prototype, 'mute', {
-			value: async function mutar(args, reason) {
-				let regex: RegExp = /([0-9]+)( |)(h|m|s)/gi,
-					time: number = Date.now();
-				args.match(regex).forEach(t => {
-					let bah = Number(t.replace(/[a-z]+/gi, ''))
-					if (isNaN(bah)) return;
-					if (t.endsWith('h')) return time += bah * 60 * 60 * 1_000;
-					if (t.endsWith('m')) return time += bah * 60 * 1_000;
-					if (t.endsWith('s')) return time += bah * 1_000;
-				})
+			value: async function mutar(time, reason) {
 				let data = await axios({
 					"url": `https://${this.user._client.requestHandler.options.domain}${this.user._client.requestHandler.options.baseURL}/guilds/${this.guild.id}/members/${this.user.id}`,
 					"headers": {
@@ -81,7 +72,7 @@ module.exports = class ProtoTypes {
 				})
 				if (data.status < 200 || data.status > 300)
 					throw new Error(`DiscordRESTError:\nStatus Code: ${data.status}\n${data.statusText}`);
-				else return time;
+				else return true;
 			}
 		})
 

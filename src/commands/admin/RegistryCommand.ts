@@ -17,6 +17,7 @@ module.exports = class RegistryCommand extends CommandStructure {
             permissions: {
                 user: [],
                 bot: ['administrator'],
+                roles: ['930518575138078811'],
                 onlyDevs: false
             },
             access: {
@@ -53,7 +54,7 @@ module.exports = class RegistryCommand extends CommandStructure {
             registryButton = { type: 2, label: "Registrar", emoji: { name: "verificadoRoxo", id: "917431176745091072" }, style: 1, custom_id: `registry` },
             infos = `Usuário: ${member.user.mention}\nRegistrador:${ctx.author.mention}\n\nCargos adicionados: {{roles}}`;
         let msgObj1 = {
-            embeds: [{ ...template, description: `${getEmoji('seta').mention} Gênero:\n> ${getEmoji('um').mention} <@&872438930925035570>\n> ${getEmoji('dois').mention} <@&872438929096327179>\n> ${getEmoji('tres').mention} <@&872438930086178816>\n\nCargos adicionados: ${!roles[0] ? 'Nenhum' : roles.join(', ')}` }],
+            embeds: [{ ...template, description: `${getEmoji('seta').mention} Gênero:\n> ${getEmoji('um').mention} <@&930285113206521886>\n> ${getEmoji('dois').mention} <@&930285119024005190>\n> ${getEmoji('tres').mention} <@&930285116553576498>\n\nCargos adicionados: ${!roles[0] ? 'Nenhum' : roles.join(', ')}` }],
             components: [{
                 type: 1,
                 components: [
@@ -63,16 +64,16 @@ module.exports = class RegistryCommand extends CommandStructure {
             }]
         },
             msgObj2 = {
-                embeds: [{ ...template, description: `${getEmoji('seta').mention} Idade:\n> ${getEmoji('um').mention} <@&872438931608723477>\n> ${getEmoji('dois').mention}<@&872438931529027594>\n\nCargos adicionados: {{roles}}` }],
+                embeds: [{ ...template, description: `${getEmoji('seta').mention} Idade:\n> ${getEmoji('um').mention} <@&930468809331052544>\n> ${getEmoji('dois').mention}<@&930468848434544681>\n\nCargos adicionados: {{roles}}` }],
                 components: [{
                     type: 1, components: [
-                        { type: 2, label: "-18", style: 1, custom_id: `underage` },
-                        { type: 2, label: "+18", style: 4, custom_id: `aboveage` }
+                        { type: 2, label: "+18", style: 4, custom_id: `aboveage` },
+                        { type: 2, label: "-18", style: 1, custom_id: `underage` }
                     ]
                 }]
             },
             msgObj3 = {
-                embeds: [{ ...template, description: `${getEmoji('seta').mention} Sexualidade:\n> ${getEmoji('um').mention} <@&872447099881529354>\n> ${getEmoji('dois').mention} <@&872447099701174284>\n\nCargos adicionados: {{roles}}` }],
+                embeds: [{ ...template, description: `${getEmoji('seta').mention} Sexualidade:\n> ${getEmoji('um').mention} <@&930515464973590569>\n> ${getEmoji('dois').mention} <@&930515507822592031>\n\nCargos adicionados: {{roles}}` }],
                 components: [{
                     type: 1, components: [
                         { type: 2, label: "Hétero", style: 3, custom_id: `hetero` },
@@ -82,7 +83,7 @@ module.exports = class RegistryCommand extends CommandStructure {
                 }]
             },
             msgObj4 = {
-                embeds: [{ ...template, description: `${getEmoji('seta').mention} Estado Civil:\n> ${getEmoji('um').mention} <@&872447098811998268>\n> ${getEmoji('dois').mention} <@&872447090561802287>\n> ${getEmoji('tres').mention} <@&872447098208006184>\n\nCargos adicionados: {{roles}}` }],
+                embeds: [{ ...template, description: `${getEmoji('seta').mention} Estado Civil:\n> ${getEmoji('um').mention} <@&930468881468882964>\n> ${getEmoji('dois').mention} <@&930469038625275915>\n> ${getEmoji('tres').mention} <@&930469098834497546>\n\nCargos adicionados: {{roles}}` }],
                 components: [{
                     type: 1, components: [
                         { type: 2, label: "Solteiro", style: 1, custom_id: `solteiro` },
@@ -109,34 +110,34 @@ module.exports = class RegistryCommand extends CommandStructure {
             }
 
             switch (interaction.data.custom_id) {
-                case 'macho': roles.push('<@&872438929096327179>');
+                case 'macho': roles.push('<@&930285119024005190>');
                     await filtrarEmbed(msgObj2);
                     break;
-                case 'femea': roles.push('<@&872438930925035570>');
+                case 'femea': roles.push('<@&930285113206521886>');
                     await filtrarEmbed(msgObj2);
                     break;
-                case 'naobinario': roles.push('<@&872438930086178816>');
+                case 'naobinario': roles.push('<@&930285116553576498>');
                     await filtrarEmbed(msgObj2);
                     break;
-                case 'aboveage': roles.push('<@&872438931529027594>');
+                case 'aboveage': roles.push('<@&930468809331052544>');
                     await filtrarEmbed(msgObj3);
                     break
-                case 'underage': roles.push('<@&872438931608723477>');
+                case 'underage': roles.push('<@&930468848434544681>');
                     await filtrarEmbed(msgObj3);
                     break;
-                case 'hetero': roles.push('<@&872447099881529354>');
+                case 'hetero': roles.push('<@&930515464973590569>');
                     await filtrarEmbed(msgObj4);
                     break;
-                case 'lgbt': roles.push('<@&872447099701174284>');
+                case 'lgbt': roles.push('<@&930515507822592031>');
                     await filtrarEmbed(msgObj4);
                     break;
-                case 'solteiro': roles.push('<@&872447098811998268>');
+                case 'solteiro': roles.push('<@&930468881468882964>');
                     registry();
                     break;
-                case 'namorando': roles.push('<@&872447090561802287>');
+                case 'namorando': roles.push('<@&930469038625275915>');
                     registry();
                     break;
-                case 'casado': roles.push('<@&872447098208006184>');
+                case 'casado': roles.push('<@&930469098834497546>');
                     registry();
                     break;
                 case 'registry': registry();
@@ -145,23 +146,24 @@ module.exports = class RegistryCommand extends CommandStructure {
             async function registry() {
                 await filtrarEmbed(msgObj5);
                 EventCollector.stop();
+                await member.addRole('930113167365914685');
                 roles.forEach(async r => {
                     let role = ctx.guild.roles.get(r.replace('<@&', '').replace('>', ''));
-                    await member.removeRole('872316304537817149');
+                    await member.removeRole('929775445581373480');
                     await member.addRole(role.id);
                 })
                 await db.users.update(ctx.uID, { registros: 'sql registros + 1' });
                 ket.createMessage(ket.config.channels.registroLogs, {
                     embed: {
-                        title: 'Usuário registrado!',
-                        color: getColor('green'),
+                        title: `${getEmoji('membro').mention} Usuário registrado!`,
+                        color: getColor('#4c1313'),
                         author: {
                             name: member.user.tag,
                             icon_url: member.user.dynamicAvatarURL('jpg')
                         },
-                        description: `Usuário: ${member.user.mention} (ID: ${member.user.id})\nCargos adicionados: ${roles.join(', ')}\nRegistro número ${Number(ctx.user.registros) + 1}`,
+                        description: `**Usuário(a):** ${member.user.mention} (ID: ${member.user.id})\n**Registrador(a):** ${ctx.author.mention} (ID: ${ctx.author.id})\n**Total de registros:** \`${Number(ctx.user.registros) + 1}\`\n**Cargos adicionados:**\n${roles.join(', ')}`,
                         footer: {
-                            text: `Registrador: ${ctx.author.tag}`,
+                            text: `Registros | ${ctx.guild.name}`,
                             icon_url: ctx.author.dynamicAvatarURL('jpg')
                         }
                     }
