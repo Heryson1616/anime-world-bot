@@ -1,7 +1,6 @@
 import KetClient from "../KetClient";
 import TerminalClient from "../components/CLI/TerminalClient";
 import gradient from "gradient-string";
-import c from "chalk";
 
 module.exports = class ReadyEvent {
     ket: KetClient;
@@ -20,7 +19,9 @@ module.exports = class ReadyEvent {
             db = global.session.db;
         //@ts-ignore
         setInterval(async () => this.ket.editStatus("dnd", status[Math.floor(Math.random() * status.length)]), 20_000)
-        global.session.log('log', "CLIENT", `Sessão iniciada como ${c.bgGreen(c.white(this.ket.user.tag))}\n${gradient('red', 'yellow')("◆ ▬▬▬▬▬▬▬▬ ❴ ✪ ❵ ▬▬▬▬▬▬▬▬ ◆")}\nOperante em ${this.ket.guilds.size} templos com ${this.ket.guilds.map(g => g.memberCount).reduce((acc, crt) => acc + crt) - this.ket.guilds.size} subordinados`);
+        console.log('READY', `Sessão iniciada como ${this.ket.user.tag}`, 33);
+        console.info(gradient('red', 'yellow')("◆ ▬▬▬▬▬▬▬▬▬▬▬ ❴ ✪ ❵ ▬▬▬▬▬▬▬▬▬▬▬ ◆"));
+        console.log(`Operante em ${this.ket.guilds.size} templos com ${this.ket.guilds.map(g => g.memberCount).reduce((acc, crt) => acc + crt) - this.ket.guilds.size} subordinados`);
         return TerminalClient(this.ket);
     }
 }

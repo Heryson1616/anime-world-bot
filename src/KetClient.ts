@@ -1,10 +1,7 @@
-export { };
 import { Client, ClientOptions, Collection, CommandInteraction, ExtendedUser, Guild, GuildChannel, Member, Message, User, Webhook } from "eris";
 import { ESMap } from "typescript";
 import EventHandler from "./components/core/EventHandler";
-import { readdir } from "fs";
-import { t } from "i18next";
-
+import { readdirSync } from "fs";
 const { Decoration } = require('./components/Commands/CommandStructure'),
     { getEmoji, getColor } = Decoration;
 
@@ -38,50 +35,90 @@ export default class KetClient extends Client {
         this.events = new (EventHandler)(this);
         this.commands = new Map();
         this.aliases = new Map();
-        this.callTime = new Map();
+        this.webhooks = new Map();
         this.shardUptime = new Map();
     }
     public async boot() {
-        this.loadLocales();
-        this.loadCommands();
+        this.loadLocales(`${__dirname}/locales/`);
+        this.loadCommands(`${__dirname}/commands`);
         this.loadListeners(`${__dirname}/events/`);
-        this.loadModules();
+        this.loadModules(`${__dirname}/packages/`);
         return super.connect();
     }
 
-    public loadLocales() {
-        require('./components/core/LocalesStructure')()
-        return this;
+    public loadLocales(path) {
+        let config = global.locale = {
+            defaultLang: 'pt',
+            defaultJSON: 'commands',
+            langs: readdirSync(path),
+            files: [],
+            filesMetadata: {}
+        }
+        try {
+            config.files = readdirSync(`${path}/${config.defaultLang}/`)
+            for (let a in config.langs)
+                for (let b in config.files) {
+                    if (!config.filesMetadata[config.langs[a]]) config.filesMetadata[config.langs[a]] = {};
+                    config.filesMetadata[config.langs[a]][config.files[b].split('.json')[0]] = require(`${path}/${config.langs[a]}/${config.files[b]}`)
+                }
+            console.log('LOCALES', 'Locales carregados', 36)
+            return true;
+        } catch (e) {
+            console.log('LOCALES', e, 41)
+            return false;
+        } finally {
+            return global.t = (str: string, placeholders: object, lang: string) => {
+                const data = config.filesMetadata[lang || global.lang || config.defaultLang][str.includes(':') ? str.split(':')[0] : config.defaultJSON];
+                let content = eval(`data.${str.includes(':') ? str.split(':')[1] : str}`);
+                if (!data || !content) return 'Placeholder não encontrado';
+
+                let filtrar = (ctt) => {
+                    if (!placeholders) return ctt;
+                    Object.entries(placeholders).forEach(([key, value]) => {
+                        let regex: RegExp = eval(`/{{(${key}|${key}.*?)}}/g`);
+                        ctt.match(regex).map(a => a.replace(eval(`/({{|}})/g`), '')).forEach((match: string) => {
+                            try {
+                                let ph = placeholders[match.split('.')[0]][match.split('.')[1]];
+                                if (match.includes('.') && ph) ctt = ctt.replace(`{{${match}}}`, ph);
+                                else typeof value !== 'object' ? ctt = ctt.replace(`{{${match}}}`, value) : null;
+                            } catch (e) { }
+                        });
+                    });
+                    return ctt;
+                }
+                return typeof content === 'object' ? JSON.parse(filtrar(JSON.stringify(content))) : filtrar(content);
+            }
+        }
     }
 
     public loadListeners(path: string) {
         try {
-            readdir(path, (_e: any, files: string[]) => {
-                files.forEach((fileName: string) => {
-                    if (fileName.startsWith('_')) return;
-                    this.events.add(fileName.split(".")[0].replace('on-', ''), `${__dirname}/events/${fileName}`);
-                })
-            })
+            let files = readdirSync(path), i = 0;
+            for (let a in files) {
+                if (files[a].startsWith('_')) return; i++
+                this.events.add(files[a].split(".")[0].replace('on-', ''), `${__dirname}/events/${files[a]}`);
+            }
+            console.log('EVENTS', `${i} Eventos carregados`, 2);
+            return true;
         } catch (e) {
-            global.session.log('error', "EVENTS LOADER", `Erro ao carregar eventos:`, e);
+            console.log('EVENTS', e, 41);
+            return false;
         }
-        return this;
     }
 
-    public loadModules() {
+    public loadModules(path: string) {
         try {
-            readdir(`${__dirname}/packages/`, (_e: any, categories: string[]) => {
-                categories.forEach((category: string) => {
-                    readdir(`${__dirname}/packages/${category}/`, (_e: any, modules: string[]) => {
-                        modules.forEach(async (file: string) => file.startsWith("_") || category === 'postinstall' ? null : require(`${__dirname}/packages/${category}/${file}`)(this))
-                    })
-                })
-            })
-            global.session.log('log', 'MODULES MANAGER', '√ Módulos inicializados');
+            let categories = readdirSync(`${path}/`), i = 0;
+            for (let a in categories) {
+                let modules = readdirSync(`${path}/${categories[a]}/`);
+                for (let b in modules) modules[b].startsWith("_") ? null : require(`${path}/${categories[a]}/${i++ ? modules[b] : modules[b]}`)(this)
+            }
+            console.log('MODULES', `${i} Módulos inicializados`, 2);
+            return true;
         } catch (e) {
-            global.session.log('error', 'MODULES MANAGER', 'Houve um erro ao carregar os módulos:', e);
+            console.log('MODULES', e, 41);
+            return false;
         }
-        return this;
     }
 
     public async reloadCommand(commandName: string) {
@@ -94,7 +131,7 @@ export default class KetClient extends Client {
             const command = new (require(comando.config.dir))(this);
             command.config.dir = comando.config.dir;
             this.commands.set(command.config.name, command);
-            command.config.aliases.forEach((aliase: any) => this.aliases.set(aliase, command.config.name));
+            command.config.aliases.forEach((aliase: string) => this.aliases.set(aliase, command.config.name));
             return true;
         } catch (e) {
             return e;
@@ -162,14 +199,15 @@ export default class KetClient extends Client {
                 case 'edit': return interaction.editOriginalMessage(msgObj).catch(() => { });
             }
         }
+        return true;
     }
 
     public async findUser(context?: any, text?: string, returnMember: boolean = false) {
         let search: string,
-            user: User | Member = context.author,
+            user: User | Member,
             isInteraction = (context instanceof CommandInteraction ? true : false);
 
-        if (isNaN(Number(text))) search = String(text).toLowerCase().replace('@', '');
+        if (isNaN(Number(text))) search = text.toLowerCase().replace('@', '');
         else search = String(text).toLowerCase();
         try {
             if (isNaN(Number(text))) user = context?.mentions[0] || context.channel.guild.members.find((m: Member) => m.user.username.toLowerCase() === search || String(m.nick).toLowerCase() === search || m.user.username.toLowerCase().startsWith(search) || String(m.nick).toLowerCase().startsWith(search) || m.user.username.toLowerCase().includes(search) || String(m.nick).toLowerCase().includes(search));
@@ -189,7 +227,8 @@ export default class KetClient extends Client {
 
     public async findChannel(context?: any, id?: string) {
         let channel: GuildChannel,
-            guild: Guild = context.channel.guild;
+            guild: Guild = context.channel.guild,
+            client = this;
 
         try {
             if (context?.channelMentions) return await get(context.channelMentions[0]);
@@ -202,7 +241,7 @@ export default class KetClient extends Client {
 
         async function get(id) {
             if (guild.channels.has(id)) return guild.channels.get(id);
-            else return await this.getRESTChannel(id);
+            else return await client.getRESTChannel(id);
         }
         return channel;
     }
@@ -222,8 +261,8 @@ export default class KetClient extends Client {
             return messages.find(msg => msg?.attachments[0] || msg?.embeds[0]?.image);
 
         } else {
-            if (ref) return await get(ref.messageID);
-            else if (!isNaN(Number(id))) return await get(id);
+            if (!isNaN(Number(id))) return await get(id);
+            else if (ref) return await get(ref.messageID);
             else return null;
         }
 
@@ -233,23 +272,24 @@ export default class KetClient extends Client {
         }
     }
 
-    public loadCommands() {
+    public loadCommands(path: string) {
         try {
-            readdir(`${__dirname}/commands/`, (_e: any, categories: string[]) => {
-                categories.forEach(category => {
-                    readdir(`${__dirname}/commands/${category}/`, (_e: any, files: string[]) => {
-                        files.forEach(async (command: string) => {
-                            const comando = new (require(`${__dirname}/commands/${category}/${command}`))(this);
-                            comando.config.dir = `${__dirname}/commands/${category}/${command}`;
-                            this.commands.set(comando.config.name, comando);
-                            return comando.config.aliases.forEach((aliase: any) => this.aliases.set(aliase, comando.config.name));
-                        })
-                    })
-                })
-            })
+            let categories = readdirSync(path), i = 0;
+            for (let a in categories) {
+                let files = readdirSync(`${path}/${categories[a]}/`);
+                for (let b in files) {
+                    const comando = new (require(`${path}/${categories[a]}/${files[b]}`))(this);
+                    comando.config.dir = `${path}/${categories[a]}/${files[b]}`;
+                    this.commands.set(comando.config.name, comando);
+                    i++
+                    comando.config.aliases.forEach((aliase: any) => this.aliases.set(aliase, comando.config.name));
+                }
+            }
+            console.log('COMMANDS', `${i} comandos carregados`, 2);
+            return true;
         } catch (e) {
-            global.session.log('error', 'COMMANDS HANDLER', 'Erro ao carregar comandos:', e);
+            console.log('COMMANDS', e, 41)
+            return false;
         }
-        return this;
     }
 }

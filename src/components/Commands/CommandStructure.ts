@@ -183,7 +183,7 @@ export const Decoration = {
     }
 }
 
-module.exports.getContext = ({ ket, message = null, interaction = null, user, server, args = null, command = null, commandName = null }, t) => {
+module.exports.getContext = ({ ket, message = null, interaction = null, user, server, args = null, command = null, commandName = null }) => {
     let ctx = message ? message : interaction;
     return {
         ket: ket,
@@ -201,7 +201,6 @@ module.exports.getContext = ({ ket, message = null, interaction = null, user, se
         channel: ctx.channel,
         cID: ctx.channel.id,
         command: command?.config,
-        commandName: commandName,
-        t: t
+        commandName: commandName
     }
 }

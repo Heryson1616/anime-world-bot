@@ -1,4 +1,3 @@
-import c from "chalk";
 import { Client } from "pg";
 import table from "./_DatabaseTables";
 
@@ -24,26 +23,24 @@ global.session.db = {
 module.exports = async (ket) => {
 
     if (global.session.db.ready) return;
-    global.session.log('shard', 'DATABASE', 'Conectando ao banco de dados...');
-
     await postgres.connect()
-        .then(() => {
-            global.session.db = {
-                ready: true,
-                disconnect: () => {
-                    postgres.end()
-                    global.session.db.ready = false;
-                },
-                users: new table('users', 'id', postgres)
-            };
-            global.session.log('log', 'DATABASE', '√ Banco de dados operante');
-        })
-        .catch((error) => global.session.log('error', 'DATABASE', `x Não foi possível realizar conexão ao banco de dados`, error))
+    .then(() => {
+        global.session.db = {
+            ready: true,
+            disconnect: () => {
+                postgres.end()
+                global.session.db.ready = false;
+            },
+            users: new table('users', 'id', postgres)
+        };
+        console.log('DATABASE', '√ Banco de dados operante', 32);
+    })
+    .catch((error) => console.log('DATABASE', `x Não foi possível realizar conexão ao banco de dados: ${error}`, 41))
 
     /* DATABASE TESTS */
     await postgres.query(`SELECT * FROM users;`)
         .catch(async () => {
-            global.session.log('log', 'DATABASE', c.yellow(`Criando tabela users`));
+            console.log('DATABASE', 'Criando tabela users', 2);
             await postgres.query(`CREATE TABLE public.users (
             id VARCHAR(20) NOT NULL PRIMARY KEY,
             prefix VARCHAR(3) NOT NULL DEFAULT '${ket.config.DEFAULT_PREFIX}',

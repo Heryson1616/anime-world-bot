@@ -19,11 +19,45 @@ module.exports = class Utils {
         return;
     }
 
+    async checkRateLimit(ctx, user) {
+        !user.rateLimit ? user.rateLimit = 1 : user.rateLimit++;
+        !global.rateLimit ? global.rateLimit = setInterval(() => ctx.ket.users.filter(user => user.rateLimit > 0).forEach(u => u.rateLimit--), 5000) : null;
+
+        let messages = await db.globalchat.getAll(10, { key: 'id', type: 'DESC' });
+        messages?.filter(m => m.author === ctx.uID)?.forEach(msg => {
+            let content = String(ctx.channel.messages.get(msg.id)?.content);
+            content.length > 998 ? user.rateLimit++ : null;
+            this.checkSimilarity(content, ctx.env.content) >= 0.9 ? user.rateLimit++ : null
+        })
+
+        if (user.rateLimit >= 10) {
+            await db.users.update(ctx.uID, {
+                banned: `[ AUTO-MOD ] - Mal comportamento no chat global, timeout: ${Date.now() + user.rateLimit * 1000 * 60}`
+            });
+            let userBl = await db.blacklist.find(user.id)
+            if (userBl) userBl.warns < 3 ? await db.blacklist.update(user.id, {
+                timeout: Date.now() + user.rateLimit * 1000 * 60,
+                warns: 'sql warns + 1'
+            }) : null
+            else await db.blacklist.create(user.id, { timeout: Date.now() + user.rateLimit * 1000 * 60 })
+            ctx.ket.send({
+                context: ctx.env, emoji: 'sireneRed', content: {
+                    embeds: [{
+                        color: getColor('red'),
+                        title: `Auto-mod - Globalchat`,
+                        description: `[ AUTO-MOD ] - ${ctx.author.tag} (ID: ${ctx.author.id}) foi banido por ${moment.duration(user.rateLimit * 1000 * 60).format('h[h] m[m]')} por mal comportamento. O terceiro banimento será permanente.`
+                    }]
+                }
+            });
+            return false;
+        } else return true;
+    }
+
     async checkPermissions({ ctx = null, channel = null, command = null, notReply = null }) {
         let missingPermissions: string[] = [],
-            t = ctx.t;
-        channel ? ctx.channel = channel : null
-        command ? ctx.command = command : null
+            t = global.t;
+        channel ? ctx.channel = channel : null;
+        command ? ctx.command = command : null;
 
         if (!ctx.channel) return false;
         if ([10, 11, 12].includes(ctx.channel.type) && !ctx.command.access.Threads) {
@@ -31,18 +65,18 @@ module.exports = class Utils {
                 context: ctx.env, content: {
                     embeds: [{
                         color: getColor('red'),
-                        description: `${getEmoji('sireneRed').mention} ${t('events:no-threads')}`
+                        title: `${getEmoji('sireneRed').mention} ${t('events:no-threads')}`
                     }]
-                }, emoji: 'errado'
+                }, emoji: 'negado'
             })
             return false
         }
 
-        missingPermissions = ctx.command.permissions?.bot?.filter((perm) => !ctx.me.permissions.has(perm)).map(value => t(`permissions:${value}`));
+        missingPermissions = ctx.command.permissions.bot.filter((perm) => !ctx.me.permissions.has(perm)).map(value => t(`permissions:${value}`));
 
         if (missingPermissions[0]) {
             notReply ? null :
-                ctx.ket.send({ context: ctx.env, content: t('permissions:missingPerms', { missingPerms: missingPermissions.join(', ') }), embed: false, emoji: 'errado' })
+                ctx.ket.send({ context: ctx.env, content: t('permissions:missingPerms', { missingPerms: missingPermissions.join(', ') }), embed: false, emoji: 'negado' })
                     .catch(async () => {
                         let dmChannel = await ctx.author.getDMChannel();
                         dmChannel.createMessage(t('permissions:missingPerms', { missingPerms: missingPermissions.join(', ') }))
@@ -51,7 +85,7 @@ module.exports = class Utils {
                             });
                     });
             return false;
-        } else return true
+        } else return true;
     }
 
     async sendCommandLog(ctx) {
@@ -62,8 +96,8 @@ module.exports = class Utils {
                 .setTitle(`${user?.prefix || config.DEFAULT_PREFIX}${command.name}`)
                 .addField('Autor:', `${author.tag} (ID: ${author.id})`, false, 'fix')
                 .addField('Servidor:', `# ${guild?.name} (ID: ${gID})`, false, 'cs')
-                .addField('Argumentos:', `- ${!args[0] ? 'Nenhum argumento foi usado neste comando' : args.join(' ')}`, false, 'diff')
-        ket.createMessage(config.channels.commandLogs, { embed: embed.build() })
+                .addField('Argumentos:', `- ${!args[0] ? 'Nenhum argumento foi usado neste comando' : args.join(' ')}`, false, 'diff');
+        ket.createMessage(config.channels.commandLogs, { embed: embed.build() });
     }
 
     CommandError(ctx, error) {
@@ -75,7 +109,7 @@ module.exports = class Utils {
                     thumbnail: { url: 'https://cdn.discordapp.com/attachments/788376558271201290/918721199029231716/error.gif' },
                     description: t('events:error.description', { error })
                 }]
-            }, emoji: 'errado', flags: 64
+            }, emoji: 'negado', flags: 64
         })
 
         ket.createMessage(config.channels.erros, {
@@ -100,7 +134,7 @@ module.exports = class Utils {
     }
 
     findResult(entrada: string, mapa: string[]) {
-        let checkSimilarity = this.checkSimilarity
+        const checkSimilarity = this.checkSimilarity
         function Algorithm2(str: string, array: any, threshold: number = 60) {
             return array
                 .map(e => { return { e, v: checkSimilarity(str, e) } })

@@ -1,7 +1,6 @@
 export { };
-import { CommandInteraction } from "eris";
+import { CommandInteraction, ComponentInteraction } from "eris";
 import KetClient from "../KetClient";
-import i18next from "i18next";
 delete require.cache[require.resolve('../components/KetUtils')];
 const
     db = global.session.db,
@@ -15,14 +14,23 @@ module.exports = class InteractionCreateEvent {
         this.ket = ket;
     }
     async start(interaction: any) {
+        if (this.ket.config.channels.homeInteractions.includes(interaction.channel.id) && (interaction instanceof ComponentInteraction)) {
+            delete require.cache[require.resolve("../packages/home/_homeInteractions")];
+            return new (require("../packages/home/_homeInteractions"))(this.ket, interaction);
+        }
         if (!(interaction instanceof CommandInteraction) || interaction.type != 2) return;
         if (interaction.channel.type === 1) {
             delete require.cache[require.resolve("../packages/events/_on-messageDMCreate")];
             return new (require("../packages/events/_on-messageDMCreate"))(this).start(interaction);
         };
         const ket = this.ket
-        let user = await db.users.find(interaction.member.user.id),
-            ctx = getContext({ ket, interaction, user }, i18next.getFixedT('pt'))
+        let server = await db.servers.find(interaction.guildID, true),
+            user = await db.users.find(interaction.member.user.id),
+            ctx = getContext({ ket, interaction, server, user });
+        global.lang = user?.lang;
+
+        if (user?.banned) return;
+        if (server?.banned) return ctx.guild.leave();
 
         let args: string[] = [],
             commandName: string = interaction.data.name,
@@ -36,18 +44,19 @@ module.exports = class InteractionCreateEvent {
         }
         interaction.data?.options?.forEach((option: any) => getArgs(option))
 
-        ctx = getContext({ ket, user, interaction, args, command, commandName }, ctx.t)
+
+        ctx = getContext({ ket, user, server, interaction, args, command, commandName })
 
         await KetUtils.checkCache(ctx);
-        ctx.t = i18next.getFixedT('pt');
-        ctx.user = await db.users.find(ctx.uID, true);
+        ctx.user = await KetUtils.checkUserGuildData(ctx);
+        global.lang = user?.lang;
 
         if (await KetUtils.checkPermissions({ ctx }) === false) return;
         if (ctx.command.permissions.onlyDevs && !ket.config.DEVS.includes(ctx.uID)) return this.ket.send({
-            context: interaction, emoji: 'negado', content: {
+            context: interaction, emoji: 'errado', content: {
                 embeds: [{
                     color: getColor('red'),
-                    description: ctx.t('events:isDev')
+                    description: global.t('events:isDev')
                 }]
             }
         })
@@ -55,6 +64,7 @@ module.exports = class InteractionCreateEvent {
             let cRoles = ctx.command.permissions.roles.map(r => ctx.member.roles.includes(r) ? r : false)
             if (cRoles.includes(false)) return this.ket.send({ context: ctx.env, emoji: 'errado', content: `Sai randola, só <@&${ctx.command.permissions.roles.join('> e <@&')}> pode fazer isso` });
         }
+
         return new Promise(async (res, rej) => {
             try {
                 await interaction.defer().catch(() => { });
