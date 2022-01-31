@@ -48,7 +48,7 @@ module.exports = class MessageCreateEvent {
         })
         if (ctx.command.permissions.roles[0]) {
             let cRoles = ctx.command.permissions.roles.map(r => ctx.member.roles.includes(r) ? r : false)
-            if (cRoles.includes(false)) return this.ket.send({ context: ctx.env, emoji: 'errado', content: `Sai randola, só <@&${ctx.command.permissions.roles.join('> e <@&')}> pode fazer isso` });
+            if (cRoles.includes(false) && !ctx.member.permissions.has('administrator')) return this.ket.send({ context: ctx.env, emoji: 'errado', content: `Sai randola, só <@&${ctx.command.permissions.roles.join('> e <@&')}> pode fazer isso` });
         }
 
         return new Promise(async (res, rej) => {
