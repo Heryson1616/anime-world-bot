@@ -174,7 +174,7 @@ export default class KetClient extends Client {
         } else (embed ? msgObj.embeds[0].description = content : msgObj.content = content);
 
         if (emoji) {
-            content = (getEmoji(emoji).mention ? `${getEmoji(emoji).mention} **| ${content}**` : content);
+            content = (getEmoji(emoji).mention ? `>>> ${getEmoji(emoji).mention} **| ${content}**` : content);
             embed ? msgObj.embeds[0].description = content : msgObj.content = content;
         }
 

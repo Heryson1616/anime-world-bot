@@ -53,7 +53,7 @@ module.exports = class MuteCommand extends CommandStructure {
             if (t.endsWith('s')) return time += bah * 1_000;
         })
         if ((ctx.member.roles.includes('930500134234636318') && !ctx.member.roles.includes('930805796953022494')) && time - Date.now() > (30 * 60 * 1000)) return this.ket.send({ context: ctx.env, emoji: 'errado', content: `<@&930500121517510717> gay só pode mutar por no máximo 30m` });
-
+        if (time - Date.now() < 60_000) return this.ket.send({ context: ctx.env, emoji: 'errado', content: `O tempo mínimo para mutar um membro é 1 minuto (1m)` });
 
         let msg = await this.ket.send({
             context: ctx.env, content: {
