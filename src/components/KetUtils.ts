@@ -67,13 +67,13 @@ module.exports = class Utils {
     }
 
     CommandError(ctx, error) {
-        const { t, ket, args, config, command, author, uID, guild, gID, me, channel, cID } = ctx
+        const { ket, args, config, command, author, uID, guild, gID, me, channel, cID } = ctx
         ket.send({
             context: ctx.env, content: {
                 embeds: [{
                     color: getColor('red'),
                     thumbnail: { url: 'https://cdn.discordapp.com/attachments/788376558271201290/918721199029231716/error.gif' },
-                    description: t('events:error.description', { error })
+                    description: global.t('events:error.description', { error })
                 }]
             }, emoji: 'negado', flags: 64
         })

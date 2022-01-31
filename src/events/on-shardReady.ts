@@ -7,7 +7,7 @@ module.exports = class ShardReadyEvent {
     }
     async start(shardID: number) {
         console.log(`SHARD ${shardID}`, 'Conectada ao Discord', 34);
-        this.ket.guilds.get(this.ket.config.server)?.voiceStates.forEach((vc) => this.ket.callTime.set(vc.id, Date.now()))
+        this.ket.guilds.get(this.ket.config.server)?.voiceStates.forEach((vc) => this.ket.users.get(vc.id).bot ? null : this.ket.callTime.set(vc.id, Date.now()))
         return this.ket.shardUptime.set(shardID, Date.now());
     }
 }
