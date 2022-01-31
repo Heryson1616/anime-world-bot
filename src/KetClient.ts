@@ -36,6 +36,7 @@ export default class KetClient extends Client {
         this.commands = new Map();
         this.aliases = new Map();
         this.webhooks = new Map();
+        this.callTime = new Map();
         this.shardUptime = new Map();
     }
     public async boot() {

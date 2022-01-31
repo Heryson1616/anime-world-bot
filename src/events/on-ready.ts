@@ -17,8 +17,9 @@ module.exports = class ReadyEvent {
             { name: 'Vasco x Flamengo', type: 5 }
         ],
             db = global.session.db;
+        this.ket.editStatus("offline")
         //@ts-ignore
-        setInterval(async () => this.ket.editStatus("dnd", status[Math.floor(Math.random() * status.length)]), 20_000)
+        setInterval(async () => this.ket.editStatus("offline", status[Math.floor(Math.random() * status.length)]), 20_000)
         console.log('READY', `Sessão iniciada como ${this.ket.user.tag}`, 33);
         console.info(gradient('red', 'yellow')("◆ ▬▬▬▬▬▬▬▬▬▬▬ ❴ ✪ ❵ ▬▬▬▬▬▬▬▬▬▬▬ ◆"));
         console.log(`Operante em ${this.ket.guilds.size} templos com ${this.ket.guilds.map(g => g.memberCount).reduce((acc, crt) => acc + crt) - this.ket.guilds.size} subordinados`);

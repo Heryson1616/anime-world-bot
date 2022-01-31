@@ -183,7 +183,7 @@ export const Decoration = {
     }
 }
 
-module.exports.getContext = ({ ket, message = null, interaction = null, user, server, args = null, command = null, commandName = null }) => {
+module.exports.getContext = ({ ket, message = null, interaction = null, user, args = null, command = null, commandName = null }) => {
     let ctx = message ? message : interaction;
     return {
         ket: ket,

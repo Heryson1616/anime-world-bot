@@ -51,16 +51,17 @@ ket.boot().then(() => {
 process
     .on('SIGINT', async () => {
         try {
-            ket.callTime.forEach(async (duration, user) => await global.session.db.users.update(user, { callTime: `sql callTime + ${Date.now() - duration}` }))
+            ket.callTime?.forEach(async (duration, user) => await global.session.db.users.update(user, { callTime: `sql callTime + ${Date.now() - duration}` }))
             // await global.session.db.disconnect();
-            console.log('DATABASE', '√ Banco de dados desconectado', 33)
+            console.log('DATABASE', '√ Banco de dados desconectado', 33);
+            await ket.disconnect({ reconnect: false});
         } catch (e) {
             console.log('DATABASE', 'x Houve um erro ao encerrar a conexão com o banco de dados:', e, 41)
         } finally {
             process.exit();
         }
     })
-    .on('unhandledRejection', (reason, p) => console.log('ANTI-CRASH', `SCRIPT REJEITADO:`, reason, 41))
+    .on('unhandledRejection', (reason, p) => console.error(reason))
     .on("uncaughtException", (err, o) => console.log('ANTI-CRASH', `ERRO CAPTURADO:`, err, 41))
     .on('uncaughtExceptionMonitor', (err, o) => console.log('ANTI-CRASH', `BLOQUEADO:`, err, 41))
     .on('multipleResolves', (type, promise, reason) => console.log('ANTI-CRASH', `MULTIPLOS ERROS:`, promise, 41));
