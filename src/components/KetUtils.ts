@@ -4,7 +4,7 @@ import axios from "axios";
 import DidYouMean from "didyoumean";
 const
     moment = require('moment'),
-    db = global.session.db,
+    db = global.db,
     { Decoration, EmbedBuilder } = require('./Commands/CommandStructure'),
     { getEmoji, getColor } = Decoration;
 

@@ -34,7 +34,7 @@ module.exports = class RegistryCommand extends CommandStructure {
     }
     async execute(ctx) {
         let member = await this.ket.findUser(ctx.env, ctx.args[0], true),
-            db = global.session.db,
+            db = global.db,
             ket = this.ket;
         if (!member || member.id === ctx.uID) return this.ket.send({ context: ctx.env, emoji: 'errado', content: `Usuário não encontrado!` });
 
@@ -152,7 +152,7 @@ module.exports = class RegistryCommand extends CommandStructure {
                     await member.removeRole('929775445581373480');
                     await member.addRole(role.id);
                 })
-                await db.set(`/users/${ctx.uID}`, { registros: 'sql oldData.registros + 1' });
+                await db.set(`/users/${ctx.uID}`, { registros: 'sql oldData.registros || 0 + 1' });
                 ket.createMessage(ket.config.channels.registroLogs, {
                     embed: {
                         title: `${getEmoji('badge').mention} Usuário registrado!`,

@@ -16,7 +16,7 @@ module.exports = class ReadyEvent {
             { name: "sua mãe gemendo", type: 2 },
             { name: 'Vasco x Flamengo', type: 5 }
         ],
-            db = global.session.db;
+            db = global.db;
         this.ket.editStatus("offline")
         //@ts-ignore
         setInterval(async () => this.ket.editStatus("offline", status[Math.floor(Math.random() * status.length)]), 20_000)

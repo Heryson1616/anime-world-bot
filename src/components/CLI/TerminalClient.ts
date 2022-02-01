@@ -23,7 +23,7 @@ export default async function(ket: KetClient) {
             }
         });
         let evaled,
-            db = global.session.db;
+            db = global.db;
         try {
             if (response.code.startsWith('.')) {
                 delete require.cache[require.resolve(`./CLI`)];

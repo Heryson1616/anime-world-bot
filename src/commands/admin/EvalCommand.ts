@@ -41,7 +41,7 @@ module.exports = class EvalCommand extends CommandStructure {
     async execute(ctx) {
         const
             ket = this.ket,
-            db = global.session.db;
+            db = global.db;
         let
             message = ctx.env,
             evaled = ctx.args.join(" ")

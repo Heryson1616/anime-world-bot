@@ -2,7 +2,7 @@ import { Message } from "eris";
 import KetClient from "../KetClient";
 delete require.cache[require.resolve('../components/KetUtils')];
 const
-    db = global.session.db,
+    db = global.db,
     KetUtils = new (require('../components/KetUtils'))(),
     { getContext, Decoration } = require('../components/Commands/CommandStructure'),
     { getEmoji, getColor } = Decoration;
@@ -15,13 +15,12 @@ module.exports = class MessageCreateEvent {
     async start(message: Message) {
         if (message.author?.bot || !message.guildID || message.channel.type === 1) return;
         const ket = this.ket
-        let user = await db.get(`/users/${message.author.id}`, true),
-            ctx = getContext({ ket, message, user });
+        let user = await db.get(`/users/${message.author.id}`),
+            ctx = getContext({ ket, message, user }),
+            regexp = new RegExp(`^(${(user.prefix).replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')}|<@!?${this.ket.user.id}>)( )*`, 'gi')
 
-        if (user?.banned) return;
-
-        const regexp = new RegExp(`^(${((!user || !user.prefix) ? this.ket.config.DEFAULT_PREFIX : user.prefix).replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')}|<@!?${this.ket.user.id}>)( )*`, 'gi')
-        if (!message.content.match(regexp)) return;
+        if (!message.content.match(regexp) || user.banned) return;
+        user = await db.get(`/users/${message.author.id}`)
         let args: string[] = message.content.replace(regexp, '').trim().split(/ /g),
             commandName: string | null = args.shift().toLowerCase(),
             command = ket.commands.get(commandName) || ket.commands.get(ket.aliases.get(commandName));

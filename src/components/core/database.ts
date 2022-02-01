@@ -1,49 +1,50 @@
-import app, { FirebaseOptions } from "firebase/app";
-import firebase from "firebase/database";
+import { initializeApp, FirebaseOptions } from "firebase/app";
+import { getDatabase, ref, onValue, set, remove } from "firebase/database";
+import KetClient from "../../KetClient";
 let db: any;
-
 class Database {
-    firebase: typeof firebase;
     firebaseConfig: FirebaseOptions;
-    app: typeof app;
     database: any;
-    ready: boolean;
     schema: object
     template: object;
-    constructor(firebaseConfig) {
-        this.firebase = firebase;
-        this.app = app;
+    constructor(firebaseConfig: FirebaseOptions) {
         this.firebaseConfig = firebaseConfig;
         this.database = null;
-        this.ready = false;
         this.schema = {
             id: 'String limit 20',
             prefix: 'String limit 3',
             registros: 'Number limit -1',
-            callTime: 'Number limit -1'
+            callTime: 'Number limit -1',
+            banned: 'Boolean limit -1'
         }
         this.template = {
             prefix: 'al!',
             registros: 0,
-            callTime: 0
+            callTime: 0,
+            banned: false
         }
     }
 
-    public connect() {
-        const fbApp = app.initializeApp(this.firebaseConfig);
-        this.database = firebase.getDatabase(fbApp);
+    public async connect() {
+        const fbApp = initializeApp(this.firebaseConfig);
+        this.database = getDatabase(fbApp);
         return this;
     }
 
-    public getRef(ref: string) {
-        return firebase.ref(this.database, ref);
+    getRef(index: string) {
+        return ref(this.database, index);
     }
 
-    public get(ref: string) {
-        return new Promise((res, rej) => firebase.onValue(this.getRef(ref), snapshot => snapshot.val() ? snapshot.val() : this.template, rej));
+    get(index: string, createIfNull: boolean = false) {
+        console.log('bah')
+        return new Promise((res, rej) => onValue(this.getRef(index), snapshot => {
+            if (snapshot.val()) return snapshot.val();
+            if (createIfNull) return res(this.set(index, this.template, true));
+            else return res(this.template);
+        }, rej));
     }
 
-    public set(index: string, data: { prefix?: string, registros?: string | number, callTime?: string | number }, returnValue: boolean = false) {
+    set(index: string, data: { prefix?: string, registros?: string | number, callTime?: string | number }, returnValue: boolean = false) {
         index = String(index).slice(0, 20)
         return new Promise(async (res, rej) => {
             let oldData = await this.get(index);
@@ -56,33 +57,30 @@ class Database {
             })
 
             if (oldData) data = Object.assign(oldData, data);
-            await firebase.set(this.getRef(index), data);
+            await set(this.getRef(index), data);
             if (returnValue) return res(this.get(index));
             return true;
         });
     }
 
-    public delete(index) {
-        return firebase.remove(this.getRef(index)) ? true : false;
+    delete(index: string) {
+        return remove(this.getRef(index)) ? true : false;
     }
 
-    public exists(index) {
-        return new Promise((res, rej) => firebase.onValue(this.getRef(index), snapshot => res(snapshot.exists()), rej));
+    public exists(index: string) {
+        return new Promise((res, rej) => onValue(this.getRef(index), snapshot => res(snapshot.exists()), rej));
     }
 };
 
-export default async (ket) => {
-
-    if (db.ready) return;
-    (db = new Database(process.env.DATABASE_CRED)).ready = false
-
-    db.connect()
+export default async (ket: KetClient) => {
+    //@ts-ignore
+    (db = new Database(process.env)).connect()
         .then(() => {
-            (global.db = db).ready = true;
+            global.db = db;
             console.log('DATABASE', '√ Banco de dados operante', 32);
 
             function Backup() {
-                ket.createMessage(ket.config.channels.database, `Backup do banco de dados`, { name: `database.json`, file: JSON.stringify(db.get`/`) })
+                ket.createMessage(ket.config.channels.database, `Backup do banco de dados`, { name: `database.json`, file: JSON.stringify(db.get(`/`)) })
             }
             Backup();
             setInterval(() => Backup(), 60_000 * 30);

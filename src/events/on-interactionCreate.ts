@@ -3,7 +3,7 @@ import { CommandInteraction, ComponentInteraction } from "eris";
 import KetClient from "../KetClient";
 delete require.cache[require.resolve('../components/KetUtils')];
 const
-    db = global.session.db,
+    db = global.db,
     KetUtils = new (require('../components/KetUtils'))(),
     { getContext, Decoration } = require('../components/Commands/CommandStructure'),
     { getEmoji, getColor } = Decoration;
@@ -19,7 +19,7 @@ module.exports = class InteractionCreateEvent {
         let user = await db.get(`/users/${interaction.member.id}`, true),
             ctx = getContext({ ket, interaction, user });
 
-        if (user?.banned) return;
+        if (user.banned) return;
 
         let args: string[] = [],
             commandName: string = interaction.data.name,
