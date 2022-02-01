@@ -33,7 +33,6 @@ console.log = function () {
     if (!setor) return console.info(eval(`args.map(a => inspect(a)).join(', ')`));
     if (PRODUCTION_MODE) return console.info(str);
     console.info(`\x1B[${color}m${str}\x1B[0m`);
-    color === 41 ? console.error(args.join(' ')) : null
 }
 const ket = new KetClient(`Bot ${process.env.DISCORD_TOKEN}`, CLIENT_OPTIONS as ClientOptions)
 
@@ -47,11 +46,14 @@ ket.boot().then(() => {
     process.env.DISCORD_TOKEN = null;
     process.env.BETA_DISCORD_TOKEN = null;
 })
-
+function reject(type, error) {
+    console.log('ANTI-CRASH', type, 41);
+    console.error(error);
+}
 process
     .on('SIGINT', async () => {
         try {
-            ket.callTime?.forEach(async (duration, user) => await global.db.set(`/users/${user}`, { callTime: `sql oldData.callTime || 0 + ${Date.now() - duration}` }))
+            ket.callTime?.forEach(async (duration, user) => await global.db.set(`/users/${user}`, { callTime: `sql (oldData.callTime || 0) + ${Date.now() - duration}` }))
             // await global.db.disconnect();
             console.log('DATABASE', '√ Banco de dados desconectado', 33);
             await ket.disconnect({ reconnect: false});
@@ -61,10 +63,10 @@ process
             process.exit();
         }
     })
-    .on('unhandledRejection', (reason, p) => console.error(reason))
-    .on("uncaughtException", (err, o) => console.log('ANTI-CRASH', `ERRO CAPTURADO:`, err, 41))
-    .on('uncaughtExceptionMonitor', (err, o) => console.log('ANTI-CRASH', `BLOQUEADO:`, err, 41))
-    .on('multipleResolves', (type, promise, reason) => console.log('ANTI-CRASH', `MULTIPLOS ERROS:`, promise, 41));
+    .on('unhandledRejection', (reason, p) => reject('SCRIPT REJEITADO: ', reason))
+    .on("uncaughtException", (err, o) => reject('ERRO CAPTURADO: ', err))
+    .on('uncaughtExceptionMonitor', (err, o) => reject('BLOQUEADO: ', err));
+    // .on('multipleResolves', (type, promise, reason) => reject('MULTIPLOS ERROS: ', reason));
 /**
 * TONS DE BRANCO E CINZA
 * 1 branco

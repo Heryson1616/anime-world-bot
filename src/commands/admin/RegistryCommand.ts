@@ -52,7 +52,7 @@ module.exports = class RegistryCommand extends CommandStructure {
                 }
             },
             registryButton = { type: 2, label: "Registrar", emoji: { name: "verificadoRoxo", id: "917431176745091072" }, style: 1, custom_id: `registry` },
-            infos = `Usuário: ${member.user.mention}\nRegistrador:${ctx.author.mention}\n\nCargos adicionados: {{roles}}`;
+            infos = `**Usuário:** ${member.user.mention}\n**Registrador:** ${ctx.author.mention}\n\n**Cargos adicionados:** {{roles}}`;
         let msgObj1 = {
             embeds: [{ ...template, description: `${getEmoji('seta').mention} Gênero:\n> ${getEmoji('um').mention} <@&930285113206521886>\n> ${getEmoji('dois').mention} <@&930285119024005190>\n> ${getEmoji('tres').mention} <@&930285116553576498>\n\nCargos adicionados: ${!roles[0] ? 'Nenhum' : roles.join(', ')}` }],
             components: [{
@@ -152,7 +152,7 @@ module.exports = class RegistryCommand extends CommandStructure {
                     await member.removeRole('929775445581373480');
                     await member.addRole(role.id);
                 })
-                await db.set(`/users/${ctx.uID}`, { registros: 'sql oldData.registros || 0 + 1' });
+                await db.set(`/users/${ctx.uID}`, { registros: 'sql (oldData.registros || 0) + 1' });
                 ket.createMessage(ket.config.channels.registroLogs, {
                     embed: {
                         title: `${getEmoji('badge').mention} Usuário registrado!`,

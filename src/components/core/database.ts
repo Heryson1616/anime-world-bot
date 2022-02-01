@@ -36,29 +36,22 @@ class Database {
     }
 
     get(index: string, createIfNull: boolean = false) {
-        return new Promise((res, rej) => onValue(this.getRef(index), snapshot => {
-            if (snapshot.val()) return snapshot.val();
-            if (createIfNull) return res(this.set(index, this.template, true));
-            else return res(this.template);
-        }, rej));
+        return new Promise((res, rej) => onValue(this.getRef(index), async (snapshot) => snapshot.val() ? res(snapshot.val()) : (createIfNull ? res(this.set(index, this.template, true)) : res(this.template)), rej));
     }
 
     set(index: string, data: { prefix?: string, registros?: string | number, callTime?: string | number }, returnValue: boolean = false) {
-        index = String(index).slice(0, 20)
         return new Promise(async (res, rej) => {
             let oldData = await this.get(index);
-
             if (data) Object.entries(data).forEach(([key, value]) => {
-                let s = String(this.schema[key]).split('limit ')
-                if (typeof value === 'string' && value.includes('sql ')) eval(`data.${key} = ${value.replace('sql ', '')}`);
-
-                if (s) data[key] = eval(`${s[0]}(value)${s[1] !== '-1' ? `.slice(0, ${s[1]})` : ''}`);
+                let s = String(this.schema[key]).split(' limit ')
+                if (typeof value === 'string' && value.includes('sql '))
+                    eval(`data.${key} = ${s[0]}(${value.replace('sql ', '')})${s[1] !== '-1' ? `.slice(0, ${s[1]})` : ''}`);
             })
 
             if (oldData) data = Object.assign(oldData, data);
-            await set(this.getRef(index), data);
+            set(this.getRef(index), data);
             if (returnValue) return res(this.get(index));
-            return true;
+            return res(true);
         });
     }
 
@@ -72,14 +65,13 @@ class Database {
 };
 
 export default async (ket: KetClient) => {
-    //@ts-ignore
-    (db = new Database(process.env)).connect()
+    return (db = new Database(ket.config.DATABASE_CREDENTIALS)).connect()
         .then(() => {
             global.db = db;
             console.log('DATABASE', '√ Banco de dados operante', 32);
 
-            function Backup() {
-                ket.createMessage(ket.config.channels.database, `Backup do banco de dados`, { name: `database.json`, file: JSON.stringify(db.get(`/`)) })
+            async function Backup() {
+                ket.createMessage(ket.config.channels.database, `Backup do banco de dados`, { name: `database.json`, file: JSON.stringify(await db.get(`/`)) })
             }
             Backup();
             setInterval(() => Backup(), 60_000 * 30);

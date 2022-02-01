@@ -20,7 +20,14 @@ module.exports = class MessageCreateEvent {
             regexp = new RegExp(`^(${(user.prefix).replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')}|<@!?${this.ket.user.id}>)( )*`, 'gi')
 
         if (!message.content.match(regexp) || user.banned) return;
-        user = await db.get(`/users/${message.author.id}`)
+        if (message.content.replace('!', '') === `<@${this.ket.user.id}>`) return this.ket.send({ context: message, emoji: 'ruby', content: {
+            embeds: [{
+                color: getColor('green'),
+                title: 'Para de pingar porra',
+                description: `O seu prefixo é \`${user.prefix}\``
+            }]
+        } });
+        user = await db.get(`/users/${message.author.id}`, true)
         let args: string[] = message.content.replace(regexp, '').trim().split(/ /g),
             commandName: string | null = args.shift().toLowerCase(),
             command = ket.commands.get(commandName) || ket.commands.get(ket.aliases.get(commandName));

@@ -1,20 +1,25 @@
 {
         "BOT SETTINGS": "",
-    "DEFAULT_PREFIX": ",",
-    "DEVS": ["340626138076282900", "568493382884917258"],
+    "DEFAULT_PREFIX": "prefix",
+    "DEVS": ["id1", "id2", "..."],
     "PRODUCTION_MODE": false,
-    "server": "915935321332547634",
+    "server": "guild id",
     "channels": {
         "database": "934120705866485801",
         "erros": "934120748996501514",
         "commandLogs": "934120774409785345",
         "registroLogs": "930516138075512893"
     },
-    // id VARCHAR(20) NOT NULL PRIMARY KEY,
-    //         prefix VARCHAR(3) NOT NULL DEFAULT '${ket.config.DEFAULT_PREFIX}',
-    //         registros NUMERIC CHECK(registros > -1) DEFAULT 0,
-    //         callTime NUMERIC DEFAULT 0
-            
+    "DATABASE_CREDENTIALS": {
+        "apiKey": "",
+        "authDomain": "",
+        "databaseURL": "",
+        "projectId": "",
+        "storageBucket": "",
+        "messagingSenderId": "",
+        "appId": "",
+        "measurementId": ""
+    },
     "CLIENT_OPTIONS": {
         "allowedMentions": {
             "everyone": false,

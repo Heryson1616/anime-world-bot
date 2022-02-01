@@ -2,7 +2,7 @@ import { Client, ClientOptions, Collection, CommandInteraction, ExtendedUser, Gu
 import { ESMap } from "typescript";
 import EventHandler from "./components/core/EventHandler";
 import { readdirSync } from "fs";
-import database from "./components/core/database";
+import Database from "./components/core/Database";
 const { Decoration } = require('./components/Commands/CommandStructure'),
     { getEmoji, getColor } = Decoration;
 
@@ -42,7 +42,7 @@ export default class KetClient extends Client {
     }
     public async boot() {
         this.loadLocales(`${__dirname}/locales/`);
-        database(this);
+        await Database(this);
         this.loadCommands(`${__dirname}/commands`);
         this.loadListeners(`${__dirname}/events/`);
         return super.connect();

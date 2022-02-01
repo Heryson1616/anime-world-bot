@@ -14,7 +14,7 @@ module.exports = class voiceChannelLeaveEvent {
             callDuration = Date.now() - initialTimestamp;
 
         if (isNaN(callDuration)) return;
-        await db.set(`/users/${member.id}`, { callTime: `sql oldData.callTime || 0 + ${callDuration}` });
+        await db.set(`/users/${member.id}`, { callTime: `sql (oldData.callTime || 0) + ${callDuration}` });
         this.ket.callTime.delete(member.user.id);
     }
 }

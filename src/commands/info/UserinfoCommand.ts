@@ -42,7 +42,7 @@ module.exports = class UserinfoCommand extends CommandStructure {
                 .setColor('hardblue')
                 .addField('ID:', user.id, true, 'css')
                 .addField('Registros feitos: ', ` ${userdb.registros}`, true, 'css')
-                .addField('Tempo em Call: ', `# ${moment.duration(userdb.calltime + cacheCallDuration).format('dd[d] hh[h] mm[m] ss[s] S[ms]')}`, true, 'md')
+                .addField('Tempo em Call: ', `# ${moment.duration(userdb.callTime + cacheCallDuration).format('dd[d] hh[h] mm[m] ss[s]')}`, true, 'md');
         return this.ket.send({ context: ctx.env, content: { embeds: [embed.build()] } });
     }
 }
