@@ -36,7 +36,6 @@ class Database {
     }
 
     get(index: string, createIfNull: boolean = false) {
-        console.log('bah')
         return new Promise((res, rej) => onValue(this.getRef(index), snapshot => {
             if (snapshot.val()) return snapshot.val();
             if (createIfNull) return res(this.set(index, this.template, true));

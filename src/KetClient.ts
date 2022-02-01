@@ -100,25 +100,10 @@ export default class KetClient extends Client {
                 if (files[a].startsWith('_')) return; i++
                 this.events.add(files[a].split(".")[0].replace('on-', ''), `${__dirname}/events/${files[a]}`);
             }
-            console.log('EVENTS', `${i} Eventos carregados`, 2);
+            console.log('EVENTS', `${i} Listeners adicionados`, 2);
             return true;
         } catch (e) {
             console.log('EVENTS', e, 41);
-            return false;
-        }
-    }
-
-    public loadModules(path: string) {
-        try {
-            let categories = readdirSync(`${path}/`), i = 0;
-            for (let a in categories) {
-                let modules = readdirSync(`${path}/${categories[a]}/`);
-                for (let b in modules) modules[b].startsWith("_") ? null : require(`${path}/${categories[a]}/${i++ ? modules[b] : modules[b]}`)(this)
-            }
-            console.log('MODULES', `${i} Módulos inicializados`, 2);
-            return true;
-        } catch (e) {
-            console.log('MODULES', e, 41);
             return false;
         }
     }
