@@ -16,9 +16,8 @@ module.exports = class InteractionCreateEvent {
     async start(interaction: any) {
         if (!(interaction instanceof CommandInteraction)) return;
         const ket = this.ket
-        let user = await db.users.find(interaction.member.user.id, true),
+        let user = await db.get(`/users/${interaction.member.id}`, true),
             ctx = getContext({ ket, interaction, user });
-        global.lang = user?.lang;
 
         if (user?.banned) return;
 
@@ -38,7 +37,6 @@ module.exports = class InteractionCreateEvent {
         ctx = getContext({ ket, user, interaction, args, command, commandName })
 
         await KetUtils.checkCache(ctx);
-        global.lang = user?.lang;
 
         if (await KetUtils.checkPermissions({ ctx }) === false) return;
         if (ctx.command.permissions.onlyDevs && !ket.config.DEVS.includes(ctx.uID)) return this.ket.send({

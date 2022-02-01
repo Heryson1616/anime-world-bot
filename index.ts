@@ -51,7 +51,7 @@ ket.boot().then(() => {
 process
     .on('SIGINT', async () => {
         try {
-            ket.callTime?.forEach(async (duration, user) => await global.session.db.users.update(user, { callTime: `sql callTime + ${Date.now() - duration}` }))
+            ket.callTime?.forEach(async (duration, user) => await global.db.set(`/users/${user}`, { callTime: `sql oldData.callTime + ${Date.now() - duration}` }))
             // await global.session.db.disconnect();
             console.log('DATABASE', '√ Banco de dados desconectado', 33);
             await ket.disconnect({ reconnect: false});

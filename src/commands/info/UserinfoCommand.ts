@@ -34,7 +34,7 @@ module.exports = class UserinfoCommand extends CommandStructure {
     async execute(ctx) {
         let user: any = await this.ket.findUser(ctx.env, ctx.args[0])
         if (!user) user = ctx.author
-        let userdb = await global.session.db.users.find(user.id),
+        let userdb = await global.db.get(`/users/${user.id}`),
             cacheCallDuration = this.ket.callTime.get(user.id) ? Date.now() - this.ket.callTime.get(user.id) : 0,
             embed = new EmbedBuilder()
                 .setAuthor(user.tag, user.dynamicAvatarURL('jpg'))

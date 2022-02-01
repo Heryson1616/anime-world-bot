@@ -56,10 +56,10 @@ module.exports = class Utils {
 
     async sendCommandLog(ctx) {
         const { ket, config, command, args, author, uID, guild, gID } = ctx
-        let user = await db.users.find(uID),
+        let user = await db.get(`/users/${uID}`),
             embed = new EmbedBuilder()
                 .setColor('green')
-                .setTitle(`${user?.prefix || config.DEFAULT_PREFIX}${command.name}`)
+                .setTitle(`${user?.prefix}${command.name}`)
                 .addField('Autor:', `${author.tag} (ID: ${author.id})`, false, 'fix')
                 .addField('Servidor:', `# ${guild?.name} (ID: ${gID})`, false, 'cs')
                 .addField('Argumentos:', `- ${!args[0] ? 'Nenhum argumento foi usado neste comando' : args.join(' ')}`, false, 'diff');

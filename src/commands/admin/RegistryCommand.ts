@@ -152,7 +152,7 @@ module.exports = class RegistryCommand extends CommandStructure {
                     await member.removeRole('929775445581373480');
                     await member.addRole(role.id);
                 })
-                await db.users.update(ctx.uID, { registros: 'sql registros + 1' });
+                await db.set(`/users/${ctx.uID}`, { registros: 'sql oldData.registros + 1' });
                 ket.createMessage(ket.config.channels.registroLogs, {
                     embed: {
                         title: `${getEmoji('badge').mention} Usuário registrado!`,

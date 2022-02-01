@@ -7,7 +7,7 @@ module.exports = class voiceChannelJoinEvent {
     }
     async start(member, channel) {
         if (channel.parentID !== '930831522108411915' || member.user?.bot) return;
-        await global.session.db.users.find(member.user.id, true);
+        await global.db.get(`/users/${member.id}`, true);
         this.ket.callTime.set(member.user.id, Date.now());
     }
 }

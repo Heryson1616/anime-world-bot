@@ -2,6 +2,7 @@ import { Client, ClientOptions, Collection, CommandInteraction, ExtendedUser, Gu
 import { ESMap } from "typescript";
 import EventHandler from "./components/core/EventHandler";
 import { readdirSync } from "fs";
+import database from "./components/core/database";
 const { Decoration } = require('./components/Commands/CommandStructure'),
     { getEmoji, getColor } = Decoration;
 
@@ -41,9 +42,9 @@ export default class KetClient extends Client {
     }
     public async boot() {
         this.loadLocales(`${__dirname}/locales/`);
+        database(this);
         this.loadCommands(`${__dirname}/commands`);
         this.loadListeners(`${__dirname}/events/`);
-        this.loadModules(`${__dirname}/packages/`);
         return super.connect();
     }
 
@@ -69,7 +70,7 @@ export default class KetClient extends Client {
             return false;
         } finally {
             return global.t = (str: string, placeholders: object, lang: string) => {
-                const data = config.filesMetadata[lang || global.lang || config.defaultLang][str.includes(':') ? str.split(':')[0] : config.defaultJSON];
+                const data = config.filesMetadata[lang || config.defaultLang][str.includes(':') ? str.split(':')[0] : config.defaultJSON];
                 let content = eval(`data.${str.includes(':') ? str.split(':')[1] : str}`);
                 if (!data || !content) return 'Placeholder não encontrado';
 

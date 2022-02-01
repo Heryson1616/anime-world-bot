@@ -15,9 +15,8 @@ module.exports = class MessageCreateEvent {
     async start(message: Message) {
         if (message.author?.bot || !message.guildID || message.channel.type === 1) return;
         const ket = this.ket
-        let user = await db.users.find(message.author.id, true),
+        let user = await db.get(`/users/${message.author.id}`, true),
             ctx = getContext({ ket, message, user });
-        global.lang = user?.lang;
 
         if (user?.banned) return;
 
@@ -31,7 +30,6 @@ module.exports = class MessageCreateEvent {
         ctx = getContext({ ket, user, message, args, command, commandName })
 
         await KetUtils.checkCache(ctx);
-        global.lang = user?.lang;
 
         if (await KetUtils.checkPermissions({ ctx }) === false) return;
         if (ctx.command.permissions.onlyDevs && !ket.config.DEVS.includes(ctx.uID)) return this.ket.send({
