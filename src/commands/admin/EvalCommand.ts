@@ -55,16 +55,16 @@ module.exports = class EvalCommand extends CommandStructure {
         try {
             if (ctx.args.join(' ').includes('await')) evaled = await eval(`async function bah() {${evaled}};bah()`);
             else evaled = await eval(evaled);
-
+            evaled = inspect(evaled).replace(new RegExp(this.ket._token, 'gi'), 'censored key');
             embed
                 .setTitle('Só suSEXO bb')
                 .setColor('green')
-                .setDescription(inspect(evaled), 'js');
+                .setDescription(evaled, 'js');
         } catch (e) {
             embed
                 .setTitle('Ih deu merda viado')
                 .setColor('red')
-                .setDescription(inspect(e), 'js');
+                .setDescription(inspect(e).replace(new RegExp(this.ket._token, 'gi'), 'censored key'), 'js');
             canReturn = true
         } finally {
             if (canReturn) return ket.send({ context: ctx.env, content: { embeds: [embed.build()] } })

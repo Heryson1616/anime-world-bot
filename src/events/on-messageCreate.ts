@@ -13,11 +13,7 @@ module.exports = class MessageCreateEvent {
         this.ket = ket;
     }
     async start(message: Message) {
-        if (message.author?.bot) return;
-        if (!message.guildID || message.channel.type === 1) {
-            delete require.cache[require.resolve("../packages/events/_on-messageDMCreate")];
-            return require("../packages/events/_on-messageDMCreate")(message, this.ket);
-        };
+        if (message.author?.bot || !message.guildID || message.channel.type === 1) return;
         const ket = this.ket
         let user = await db.users.find(message.author.id, true),
             ctx = getContext({ ket, message, user });
