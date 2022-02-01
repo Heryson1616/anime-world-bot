@@ -161,7 +161,7 @@ module.exports = class RegistryCommand extends CommandStructure {
                             name: member.user.tag,
                             icon_url: member.user.dynamicAvatarURL('jpg')
                         },
-                        description: `**・Usuário(a):** ${member.user.mention} (ID: ${member.user.id})\n**・Registrador(a):** ${ctx.author.mention} (ID: ${ctx.author.id})\n**・Total de registros:** \`${Number(ctx.user.registros) + 1}\`\n**${getEmoji('add').mention} Cargos adicionados:**\n${roles.join(', ')}`,
+                        description: `**・Usuário(a):** ${member.user.mention} (ID: ${member.user.id})\n**・Registrador:** ${ctx.author.mention}\n**・Total de registros:** \`${Number(ctx.user.registros) + 1}\`\n**${getEmoji('add').mention} Cargos adicionados:**\n${roles.join(', ')}`,
                         footer: {
                             text: `Registros | ${ctx.guild.name}`,
                             icon_url: ctx.author.dynamicAvatarURL('jpg')

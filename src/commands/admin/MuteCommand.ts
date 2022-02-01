@@ -2,12 +2,12 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { Emoji, Member, Message } from "eris";
 import KetClient from "../../KetClient";
 import EventCollector from "../../components/Commands/EventCollector";
-import prettyMS from "pretty-ms";
 import parseTime from "parse-duration";
 import ms from "ms";
 
 const { CommandStructure, Decoration } = require('../../components/Commands/CommandStructure'),
-    { getEmoji, getColor } = Decoration;
+    { getEmoji, getColor } = Decoration,
+    moment = require('moment');
 
 module.exports = class MuteCommand extends CommandStructure {
     ket: KetClient;
@@ -46,12 +46,11 @@ module.exports = class MuteCommand extends CommandStructure {
         const member: any = await this.ket.findUser(ctx.env, ctx.args[0], true);
         if (!member || member.id === ctx.uID || !ctx.args[1]) return this.ket.send({ context: ctx.env, emoji: 'errado', content: `Comando incompleto, a maneira certa de usar é: \`${ctx.user.prefix}${ctx.commandName} @${ctx.author.tag} 1h 10m 4s\`` });
 
-        let parsedTime = parseTime(ctx.args.slice(1).join(' '));
-        let combineDate = new Date(Date.now() + parsedTime);
-        let estimation = combineDate.getTime() - Date.now();
-        console.info(parsedTime, combineDate, estimation);
+        let parsedTime = parseTime(ctx.args.slice(1).join(' ')),
+            duration = moment.duration((new Date(Date.now() + parsedTime)).getTime() - Date.now()).format('dd[d] hh[h] mm[m] ss[s]')
 
         if (parsedTime < ms("1m") || parsedTime > ms("28d")) return this.ket.send({ context: ctx.env, emoji: 'errado', content: `Uepa, escolha uma duração válida, que seja maior que 1 minuto e menor que 28 dias` });
+        if (member.permissions.has('administrator')) return this.ket.send({ context: ctx.env, emoji: 'errado', content: `Filho da puta burro, não da pra colocar um adm de castigo` });
         if ((ctx.member.roles.includes('930500134234636318') && !ctx.member.roles.includes('930805796953022494')) && parsedTime > ms("30m")) return this.ket.send({ context: ctx.env, emoji: 'errado', content: `<@&930500121517510717> gay só pode mutar por no máximo 30m` });
 
         let msg = await this.ket.send({
@@ -60,7 +59,7 @@ module.exports = class MuteCommand extends CommandStructure {
                     title: `🔇 | Você está prestes a mutar ${member.user.username}`,
                     color: getColor('purple'),
                     thumbnail: { url: member.user.dynamicAvatarURL('jpg') },
-                    description: `${getEmoji('info').mention} | Tem certeza de que deseja fazer isso? Ele será desconectado das calls e ficará impedido de conversar em chats do servidor.`,
+                    description: `${getEmoji('info').mention} | Tem certeza de que deseja fazer isso? Ele será desconectado das calls e ficará impedido de conversar em chats do servidor por \`${duration}\`.`,
                 }]
             }
         })
@@ -73,16 +72,18 @@ module.exports = class MuteCommand extends CommandStructure {
 
             switch (emoji.id) {
                 case getEmoji('confirmar').id:
-                    member.mute(combineDate, `Punido por: ${ctx.author.tag}`).then((time: number) => {
+                    member.mute(new Date(Date.now() + parsedTime), `Punido por: ${ctx.author.tag}`).then((time: number) => {
                         msg.edit({
                             embeds: [{
                                 title: `Usuário silenciado!`,
                                 color: getColor('pink'),
                                 thumbnail: { url: member.user.dynamicAvatarURL('jpg') },
-                                description: `${member.user.mention} foi silenciado por \`${estimation}\``,
+                                description: `${member.user.mention} foi silenciado por \`${duration}\``,
                             }]
                         })
-                    }).catch(() => { });
+                    }).catch((e) => {
+
+                    });
                     break
                 case getEmoji('cancelar').id:
                     msg.edit({
