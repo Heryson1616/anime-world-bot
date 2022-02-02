@@ -15,7 +15,7 @@ module.exports = class MessageCreateEvent {
     async start(message: Message) {
         if (message.author?.bot || !message.guildID || message.channel.type === 1) return;
         const ket = this.ket
-        let user = await db.get(`/users/${message.author.id}`),
+        let user = await db.get(`/users/${message?.author.id}`),
             ctx = getContext({ ket, message, user }),
             regexp = new RegExp(`^(${(user.prefix).replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')}|<@!?${this.ket.user.id}>)( )*`, 'gi')
 
