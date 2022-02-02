@@ -2,7 +2,7 @@
         "BOT SETTINGS": "",
     "DEFAULT_PREFIX": "prefix",
     "DEVS": ["id1", "id2", "..."],
-    "PRODUCTION_MODE": false,
+    "PRODUCTION_MODE": true,
     "server": "guild id",
     "channels": {
         "database": "934120705866485801",

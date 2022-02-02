@@ -11,7 +11,7 @@ module.exports = class ShardDisconnect {
             await global.db.set(`/users/${user}`, { callTime: `sql (oldData.callTime || 0) + ${Date.now() - duration}` })
             this.ket.callTime.delete(user);
         })
-        console.log(`SHARD ${shardID}`, `Reiniciando: ${error}`, 41);
+        console.log(`SHARD ${shardID}`, `Reiniciando... ${error}`, 41);
         return this.ket.shardUptime.set(shardID, NaN);
     }
 }

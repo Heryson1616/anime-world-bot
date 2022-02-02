@@ -37,7 +37,7 @@ module.exports = class RegistryCommand extends CommandStructure {
             db = global.db,
             ket = this.ket;
         if (!member || member.id === ctx.uID) return this.ket.send({ context: ctx.env, emoji: 'errado', content: `Usuário não encontrado!` });
-
+        if (!member.roles.includes('929775445581373480')) return this.ket.send({ context: ctx.env, emoji: 'errado', content: `Essa putinha já ta registrada` });
         let roles = [],
             template = {
                 title: `${getEmoji('registro').mention} Menu de Registro`,

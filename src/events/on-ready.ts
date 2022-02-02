@@ -17,12 +17,12 @@ module.exports = class ReadyEvent {
             { name: 'Vasco x Flamengo', type: 5 }
         ],
             db = global.db;
-        this.ket.editStatus("offline")
+        this.ket.editStatus("dnd")
         //@ts-ignore
-        setInterval(async () => this.ket.editStatus("offline", status[Math.floor(Math.random() * status.length)]), 20_000)
-        console.log('READY', `Sessão iniciada como ${this.ket.user.tag}`, 33);
+        setInterval(async () => this.ket.editStatus("dnd", status[Math.floor(Math.random() * status.length)]), 20_000)
+        console.log('GATEWAY', `Sessão iniciada como ${this.ket.user.tag}`, 33);
         console.info(gradient('red', 'yellow')("◆ ▬▬▬▬▬▬▬▬▬▬▬ ❴ ✪ ❵ ▬▬▬▬▬▬▬▬▬▬▬ ◆"));
-        console.log(`Operante em ${this.ket.guilds.size} templos com ${this.ket.guilds.map(g => g.memberCount).reduce((acc, crt) => acc + crt) - this.ket.guilds.size} subordinados`);
+        console.log(`Operante em ${this.ket.guilds.size} servidores com ${this.ket.guilds.map(g => g.memberCount).reduce((acc, crt) => acc + crt) - this.ket.guilds.size} membros`);
         return TerminalClient(this.ket);
     }
 }
