@@ -8,10 +8,10 @@ const
     { tz } = require('moment-timezone'),
     { inspect } = require('util');
 require('dotenv').config();
-moment.locale("pt-BR");
 const ket = new KetClient(`Bot ${process.env.DISCORD_TOKEN}`, CLIENT_OPTIONS as ClientOptions)
 type colorChoices = 1 | 2 | 3 | 4 | 7 | 8 | 9 | 21 | 30 | 31 | 32 | 33 | 34 | 35 | 36 | 41 | 42 | 43 | 44 | 45 | 46 | 47 | 52 | 90 | 91 | 92 | 93 | 94 | 95 | 96 | 97 | 100 | 101 | 102 | 103 | 104 | 105 | 106 | 107;
 console.log = function () {
+    moment.locale("pt-BR");
     let args: any[] = Object.entries(arguments).map(([_key, value]) => value),
         color: number = isNaN(args[args.length - 1]) ? 1 : args.pop(),
         setor: null | string = String(args[0]).toUpperCase() === args[0] ? args.shift() : null,
