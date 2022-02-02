@@ -8,19 +8,19 @@ export default class EventHandler {
         this.events = [];
     }
     add(name: string, dir: string) {
-        this.events.push({ name: name, run: require(dir) })
-        return name === 'ready'
+        name === 'ready'
             ? this.ket.once(name, (...args) => this.execute(name, args))
             : this.ket.on(name, (...args) => this.execute(name, args));
+        return this.events.push({ name: name, run: require(dir) })
     }
     execute(name: string, args: any[]) {
         return this.events.filter(e => e.name === name).forEach((e) => {
             return new (e.run)(this.ket).start(...args);
             // delete require.cache[require.resolve(event.dir)];
             // try {
-                // return new (require(event.dir))(this.ket).start(...args);
+            // return new (require(event.dir))(this.ket).start(...args);
             // } catch (e) {
-                // return this.ket.emit('error', e);
+            // return this.ket.emit('error', e);
             // }
         })
     }
