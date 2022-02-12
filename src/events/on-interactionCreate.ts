@@ -1,7 +1,6 @@
 export { };
 import { CommandInteraction, ComponentInteraction } from "eris";
 import KetClient from "../KetClient";
-delete require.cache[require.resolve('../components/KetUtils')];
 const
     db = global.db,
     KetUtils = new (require('../components/KetUtils'))(),
