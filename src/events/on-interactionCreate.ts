@@ -1,5 +1,5 @@
 export { };
-import { CommandInteraction, ComponentInteraction } from "eris";
+import { CommandInteraction } from "eris";
 import KetClient from "../KetClient";
 const
     db = global.db,
